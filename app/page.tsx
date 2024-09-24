@@ -8,6 +8,7 @@ import CategoryList from '../components/CategoryList'
 import { useState, ChangeEvent, useEffect } from 'react'
 import useProductStore from '@/stores/productStore'
 import { CartProvider } from '../context/CartContext'
+import PulsatingButton from '../components/magicui/pulsating-button'
 
 export default function Home() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -39,12 +40,12 @@ export default function Home() {
         <div className="container mx-auto px-4">
           <div className="flex flex-col items-center my-4">
             <SearchBar value={searchQuery} onChange={handleSearchChange} />
-            <button
+            <PulsatingButton
               onClick={toggleCategoryList}
-              className="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+              className="mt-4"
             >
               Browse Categories
-            </button>
+            </PulsatingButton>
           </div>
           <ProductList products={products} />
         </div>
