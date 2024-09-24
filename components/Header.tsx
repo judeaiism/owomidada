@@ -10,7 +10,7 @@ const Header: React.FC<HeaderProps> = ({ toggleMenu }) => {
     <header className="bg-white shadow-md">
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
         <Link href="/">
-          <h1 className="text-2xl font-bold">Your App Name</h1>
+          <h1 className="text-2xl font-bold">Owọ mi dá - Marketplace</h1>
         </Link>
         <button
           className="text-gray-600 hover:text-gray-800 focus:outline-none"
