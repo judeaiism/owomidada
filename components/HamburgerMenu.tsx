@@ -35,7 +35,7 @@ const HamburgerMenu: React.FC<HamburgerMenuProps> = ({ isOpen, onClose }) => {
             </li>
           </ul>
           <div className="mt-4">
-            <Link href="/create-listing" className="block w-full text-center bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded">
+            <Link href="/listing" className="block w-full text-center bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded">
               Create New Listing
             </Link>
           </div>
