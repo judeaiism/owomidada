@@ -1,4 +1,5 @@
 import React from 'react'
+import Link from 'next/link'
 
 interface HeaderProps {
   toggleMenu: () => void
@@ -8,7 +9,9 @@ const Header: React.FC<HeaderProps> = ({ toggleMenu }) => {
   return (
     <header className="bg-white shadow-md">
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-        <h1 className="text-2xl font-bold">Your App Name</h1>
+        <Link href="/">
+          <h1 className="text-2xl font-bold">Your App Name</h1>
+        </Link>
         <button
           className="text-gray-600 hover:text-gray-800 focus:outline-none"
           onClick={toggleMenu}

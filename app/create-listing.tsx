@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
-import { useProductStore } from '../stores/productStore';
+import useProductStore from '../stores/productStore';
 import { Product } from './types';
+import { collection, addDoc } from 'firebase/firestore';
+import { db } from '../firebaseConfig';
+import { useRouter } from 'next/navigation';
 
 const CreateListingPage = () => {
   const [formData, setFormData] = useState({
@@ -13,6 +16,8 @@ const CreateListingPage = () => {
 
   const addProduct = useProductStore((state) => state.addProduct);
 
+  const router = useRouter();
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -21,17 +26,28 @@ const CreateListingPage = () => {
       ...formData,
     };
 
-    addProduct(newProduct);
+    try {
+      const docRef = await addDoc(collection(db, 'products'), newProduct);
+      console.log("Document written with ID: ", docRef.id);
+      
+      // Clear the form
+      setFormData({
+        name: '',
+        price: 0,
+        category: '',
+        image: '',
+        description: '',
+      });
 
-    setFormData({
-      name: '',
-      price: 0,
-      category: '',
-      image: '',
-      description: '',
-    });
+      // Show success message (you can implement a toast notification here)
+      alert('Product added successfully!');
 
-    // TODO: Implement redirect or success message
+      // Redirect to the home page
+      router.push('/');
+    } catch (error) {
+      console.error("Error adding document: ", error);
+      alert('Error adding product. Please try again.');
+    }
   };
 
   return (

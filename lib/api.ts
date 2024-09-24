@@ -6,7 +6,8 @@ export const fetchProductsFromDatabase = async (): Promise<Product[]> => {
   const querySnapshot = await getDocs(collection(db, 'products'));
   const products: Product[] = [];
   querySnapshot.forEach((doc) => {
-    products.push({ id: doc.id, ...(doc.data() as Product) });
+    const productData = doc.data() as Omit<Product, 'id'>;
+    products.push({ ...productData, id: doc.id });
   });
   return products;
 };

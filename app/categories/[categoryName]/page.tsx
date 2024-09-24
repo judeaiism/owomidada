@@ -1,14 +1,20 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useProductsStore } from '@/store/useProductsStore';
+import useProductStore from '@/stores/productStore';
 import ProductList from '@/components/ProductList';
-import { useState } from 'react';
+import { useState, ChangeEvent } from 'react';
 import SearchBar from '@/components/SearchBar';
 
-export default function CategoryPage({ params }) {
+interface CategoryPageProps {
+  params: {
+    category: string;
+  };
+}
+
+export default function CategoryPage({ params }: CategoryPageProps) {
   const { category } = params;
-  const products = useProductsStore((state) => state.products);
+  const products = useProductStore((state) => state.items);
   const [searchQuery, setSearchQuery] = useState('');
 
   const filteredProducts = products
@@ -16,6 +22,10 @@ export default function CategoryPage({ params }) {
     .filter((product) =>
       product.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
+
+  const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
+  };
 
   return (
     <div>
@@ -25,7 +35,7 @@ export default function CategoryPage({ params }) {
       <div className="my-4">
         <SearchBar
           value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
+          onChange={handleSearchChange}
         />
         {/* Implement sort and filter components similarly */}
       </div>

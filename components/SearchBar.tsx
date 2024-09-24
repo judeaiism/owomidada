@@ -1,36 +1,38 @@
 'use client'
 
-import { useState } from 'react'
-import { Search } from 'lucide-react'
+import React, { ChangeEvent } from 'react';
 
-export default function SearchBar() {
-  const [searchTerm, setSearchTerm] = useState('')
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault()
-    // Implement search functionality here
-    console.log('Searching for:', searchTerm)
-  }
-
-  return (
-    <div className="bg-white shadow-md py-4">
-      <div className="container mx-auto px-4">
-        <form onSubmit={handleSearch} className="flex items-center">
-          <input
-            type="text"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Search for products..."
-            className="flex-grow p-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          <button
-            type="submit"
-            className="bg-blue-600 text-white p-2 rounded-r-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            <Search className="w-6 h-6" />
-          </button>
-        </form>
-      </div>
-    </div>
-  )
+interface SearchBarProps {
+  value: string;
+  onChange: (e: ChangeEvent<HTMLInputElement>) => void;
 }
+
+const SearchBar: React.FC<SearchBarProps> = ({ value, onChange }) => {
+  return (
+    <div className="relative w-full md:w-64">
+      <input
+        type="text"
+        value={value}
+        onChange={onChange}
+        placeholder="Search products..."
+        className="w-full p-2 pl-8 text-sm border rounded"
+      />
+      <svg
+        className="absolute left-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400"
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+        />
+      </svg>
+    </div>
+  );
+};
+
+export default SearchBar;
