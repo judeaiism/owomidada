@@ -1,6 +1,6 @@
 'use client'
 
-import React, { ChangeEvent } from 'react';
+import React, { ChangeEvent, useState } from 'react';
 
 interface SearchBarProps {
   value: string;
@@ -8,17 +8,24 @@ interface SearchBarProps {
 }
 
 const SearchBar: React.FC<SearchBarProps> = ({ value, onChange }) => {
+  const [isFocused, setIsFocused] = useState(false);
+
   return (
-    <div className="relative w-full md:w-64">
+    <div className="relative w-full max-w-md mx-auto">
       <input
         type="text"
         value={value}
         onChange={onChange}
+        onFocus={() => setIsFocused(true)}
+        onBlur={() => setIsFocused(false)}
         placeholder="Search products..."
-        className="w-full p-2 pl-8 text-sm border rounded"
+        className={`w-full p-2 pl-10 pr-4 text-base border rounded-full transition-all duration-300 ease-in-out
+          focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-transparent
+          ${isFocused ? 'shadow-lg' : 'shadow-sm'}
+          hover:shadow-md`}
       />
       <svg
-        className="absolute left-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400"
+        className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400"
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
         viewBox="0 0 24 24"
