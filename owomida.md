@@ -1,281 +1,192 @@
-This YAML representation provides a structured overview of your project, including the file hierarchy and the content ranges for each file. Empty objects ({}) indicate files that were mentioned but for which no specific content was provided in the input.
+# Owomida Project Overview
 
+## Project Structure
+
+yaml
 project:
-  root:
-    - .env.local
-    - node_modules:
-        - "@firebase":
-            - firestore:
-                dist:
-                  lite:
-                    - index.d.ts
-            - vertexai-preview:
-                dist:
-                  - index.cjs.js
-                  esm:
-                    - index.esm2017.js
-            - database:
-                dist:
-                  src:
-                    core:
-                      util:
-                        - validation.d.ts
-        - "@grpc":
-            proto-loader:
-              build:
-                bin:
-                  - proto-loader-gen-types.js
-        - react-icons:
-            md:
-              - index.d.ts
-        - y18n:
-            build:
-              lib:
-                - index.js
-        - firebase:
-            - firebase-database.js
+root:
+.env.local
+node_modules:
+"@firebase":
+firestore:
+dist:
+lite:
+index.d.ts
+vertexai-preview:
+dist:
+index.cjs.js
+esm:
+index.esm2017.js
+database:
+dist:
+src:
+core:
+util:
+validation.d.ts
+"@grpc":
+proto-loader:
+build:
+bin:
+proto-loader-gen-types.js
+react-icons:
+md:
+index.d.ts
+y18n:
+build:
+lib:
+index.js
+firebase:
+firebase-database.js
+app:
+_app.tsx
+cart.tsx
+categories:
+'[categoryName]':
+page.tsx
+create-listing.tsx
+layout.tsx
+page.tsx
+types.ts
+components:
+Header.tsx
+HamburgerMenu.tsx
+ProductList.tsx
+SearchBar.tsx
+ui:
+accordion.tsx
+breadcrumb.tsx
+calendar.tsx
+card.tsx
+chart.tsx
+collapsible.tsx
+command.tsx
+context-menu.tsx
+drawer.tsx
+menubar.tsx
+navigation-menu.tsx
+resizable.tsx
+table.tsx
+tabs.tsx
+toaster.tsx
+context:
+CartContext.ts
+hooks:
+use-toast.ts
+lib:
+utils.ts
+public:
+replit.svg
+stores:
+productStore.ts
+styles:
+globals.css
+Home.module.css
+.breakpoints
+.config:
+configstore:
+update-notifier-npm.json
+create-next-app-nodejs:
+config.json
+.eslintrc.json
+.gitignore
+.replit
+.upm:
+store.json
+components.json
+firebaseConfig.ts
+next-env.d.ts
+next.config.js
+package.json
+postcss.config.js
+README.md
+tailwind.config.js
+tsconfig.json
 
-environment_variables:
-  NEXT_PUBLIC_FIREBASE_API_KEY: "AIzaSyAbUtlkXw4ccDlg3c-gphWlskSaDlOHGX8"
-  NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN: "owomidada.firebaseapp.com"
-  NEXT_PUBLIC_FIREBASE_PROJECT_ID: "owomidada"
-  NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET: "owomidada.appspot.com"
-  NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID: "183569616423"
-  NEXT_PUBLIC_FIREBASE_APP_ID: "1:183569616423:web:4d5ba4bc199493dfa24802"
-  NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID: "G-XJ5P35EJDJ"
+NEXT_PUBLIC_FIREBASE_API_KEY: "AIzaSyAbUtlkXw4ccDlg3c-gphWlskSaDlOHGX8"
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN: "owomidada.firebaseapp.com"
+NEXT_PUBLIC_FIREBASE_PROJECT_ID: "owomidada"
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET: "owomidada.appspot.com"
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID: "183569616423"
+NEXT_PUBLIC_FIREBASE_APP_ID: "1:183569616423:web:4d5ba4bc199493dfa24802"
+NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID: "G-XJ5P35EJDJ"
 
-dependencies:
-  - firebase
-  - react-icons
 
-dev_dependencies:
-  - "@grpc/proto-loader"
-  - y18n
+## Dependencies
 
-typescript_definitions:
-  - "@firebase/firestore"
-  - "@firebase/vertexai-preview"
-  - "@firebase/database"
-  - "react-icons"
+Main dependencies:
+- Next.js
+- React
+- Firebase
+- React Icons
+- Tailwind CSS
+- Radix UI components
+- Zustand (for state management)
 
-firebase_modules:
-  - firestore
-  - vertexai-preview
-  - database
+Dev dependencies include TypeScript, ESLint, and various Radix UI packages.
 
-notes:
-  - The project appears to be a Next.js application using Firebase.
-  - Firebase configuration is stored in .env.local file.
-  - The project uses React Icons library, specifically Material Design icons.
-  - There are TypeScript definition files for Firebase modules.
-  - The project includes some gRPC-related tools, possibly for API communication.
-  - Y18n is included, which suggests internationalization might be implemented.
+## Key Components
 
-project_root:
-  .breakpoints:
-    content:
-      startLine: 1
-      endLine: 20
-  .config:
-    configstore:
-      update-notifier-npm.json:
-        content:
-          startLine: 1
-          endLine: 4
-    create-next-app-nodejs:
-      config.json:
-        content:
-          startLine: 1
-          endLine: 8
-  .eslintrc.json:
-    content:
-      startLine: 1
-      endLine: 4
-  .gitignore:
-    content:
-      startLine: 1
-      endLine: 130
-  .replit:
-    content:
-      startLine: 1
-      endLine: 20
-  .upm:
-    store.json:
-      content:
-        startLine: 1
-        endLine: 2
-  app:
-    _app.tsx:
-      content:
-        startLine: 1
-        endLine: 8
-    cart.tsx:
-      content:
-        startLine: 1
-        endLine: 1
-    categories:
-      '[categoryName]':
-        page.tsx:
-          content:
-            startLine: 1
-            endLine: 46
-    create-listing.tsx:
-      content:
-        startLine: 1
-        endLine: 135
-    layout.tsx:
-      content:
-        startLine: 1
-        endLine: 13
-    page.tsx:
-      content:
-        startLine: 1
-        endLine: 35
-    types.ts:
-      content:
-        startLine: 1
-        endLine: 8
-  cache:
-    config.json:
-      content:
-        startLine: 1
-        endLine: 5
-  components:
-    Header.tsx:
-      content:
-        startLine: 1
-        endLine: 25
-    HamburgerMenu.tsx:
-      content:
-        startLine: 34
-        endLine: 34
-    ProductList.tsx:
-      content:
-        startLine: 1
-        endLine: 28
-    SearchBar.tsx: {}
-    ui:
-      accordion.tsx:
-        content:
-          startLine: 1
-          endLine: 58
-      breadcrumb.tsx:
-        content:
-          startLine: 1
-          endLine: 115
-      calendar.tsx:
-        content:
-          startLine: 12
-          endLine: 66
-      card.tsx:
-        content:
-          startLine: 1
-          endLine: 56
-      chart.tsx:
-        content:
-          startLine: 68
-          endLine: 365
-      collapsible.tsx:
-        content:
-          startLine: 1
-          endLine: 11
-      command.tsx:
-        content:
-          startLine: 40
-          endLine: 155
-      context-menu.tsx:
-        content:
-          startLine: 1
-          endLine: 39
-      drawer.tsx:
-        content:
-          startLine: 1
-          endLine: 104
-      menubar.tsx:
-        content:
-          startLine: 1
-          endLine: 236
-      navigation-menu.tsx:
-        content:
-          startLine: 1
-          endLine: 128
-      resizable.tsx:
-        content:
-          startLine: 45
-          endLine: 45
-      table.tsx:
-        content:
-          startLine: 1
-          endLine: 117
-      tabs.tsx:
-        content:
-          startLine: 1
-          endLine: 37
-      toaster.tsx:
-        content:
-          startLine: 1
-          endLine: 35
-  components.json:
-    content:
-      startLine: 1
-      endLine: 20
-  context:
-    CartContext.ts:
-      content:
-        startLine: 1
-        endLine: 1
-  firebaseConfig.ts:
-    content:
-      startLine: 1
-      endLine: 10
-  hooks:
-    use-toast.ts: {}
-  lib:
-    utils.ts:
-      content:
-        startLine: 1
-        endLine: 6
-  next-env.d.ts:
-    content:
-      startLine: 1
-      endLine: 6
-  next.config.js:
-    content:
-      startLine: 1
-      endLine: 7
-  package.json:
-    content:
-      startLine: 1
-      endLine: 77
-  postcss.config.js:
-    content:
-      startLine: 1
-      endLine: 6
-  public:
-    replit.svg:
-      content:
-        startLine: 1
-        endLine: 1
-  README.md:
-    content:
-      startLine: 1
-      endLine: 25
-  stores:
-    productStore.ts: {}
-  styles:
-    globals.css:
-      content:
-        startLine: 1
-        endLine: 86
-    Home.module.css:
-      content:
-        startLine: 1
-        endLine: 117
-  tailwind.config.js:
-    content:
-      startLine: 1
-      endLine: 102
-  tsconfig.json:
-    content:
-      startLine: 1
-      endLine: 40
+1. Header (`components/Header.tsx`)
+2. SearchBar (`components/SearchBar.tsx`)
+3. ProductList (`components/ProductList.tsx`)
+4. HamburgerMenu (`components/HamburgerMenu.tsx`)
+5. CategoryList (`components/CategoryList.tsx`)
+6. Various UI components in `components/ui/`
+
+## Pages
+
+1. Home Page (`app/page.tsx`)
+2. Category Page (`app/categories/[categoryName]/page.tsx`)
+3. Cart Page (`app/cart.tsx`)
+4. Create Listing Page (`app/create-listing.tsx`)
+
+## State Management
+
+The project uses Zustand for state management, with a product store defined in `stores/productStore.ts`.
+
+## Styling
+
+- Tailwind CSS is used for styling (`styles/globals.css`)
+- Some custom CSS modules are used (`styles/Home.module.css`)
+
+## Firebase Integration
+
+Firebase is integrated into the project for backend services. The configuration is stored in `firebaseConfig.ts`.
+
+## Custom Hooks
+
+Custom hooks are located in the `hooks/` directory, including `use-toast.ts`.
+
+## TypeScript Configuration
+
+TypeScript is configured in `tsconfig.json` with strict mode enabled and paths aliases set up.
+
+## Build and Development Scripts
+json
+{
+"dev": "next dev",
+"build": "next build",
+"start": "next start",
+"lint": "next lint"
+}
+
+
+
+## Notes
+
+- The project is a Next.js application using the App Router.
+- It implements a marketplace-like structure with product listings and categories.
+- Firebase is used for backend services.
+- The UI is built with a combination of custom components and Radix UI primitives.
+- Tailwind CSS is used for styling, with some custom configurations.
+- The project includes internationalization support (y18n).
+- There's a custom implementation for a shopping cart (CartContext).
+
+## TODO
+
+- Implement authentication flow
+- Complete the cart functionality
+- Add more robust error handling
+- Implement server-side rendering for product listings
+- Optimize images and implement lazy loading
+- Add unit and integration tests

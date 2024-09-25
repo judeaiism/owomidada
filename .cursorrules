@@ -1,0 +1,186 @@
+# .cursorrules
+
+# Directories and files to ignore
+ignores:
+  - node_modules/**
+  - .next/**
+  - public/**
+  - .git/**
+  - .config/**
+  - .env.local
+  - .upm/**
+  - .breakpoints
+  - coverage/**
+  - dist/**
+  - build/**
+  - **/*.d.ts
+  - **/*.js.map
+  - **/*.css.map
+  - **/*.test.ts
+  - **/*.test.tsx
+  - **/__tests__/**
+  - **/*.config.js
+  - **/*.config.ts
+  - **/*.spec.ts
+  - **/*.spec.tsx
+  - **/*.stories.tsx
+  - **/*.stories.mdx
+
+# General, Free rules 
+-Ensure only give complete implementations.
+-Because you have the skills and knowledge.
+-Do not apologize.
+-No one is wiser than you.
+
+# Language and framework settings
+language:
+  typescript:
+    version: latest
+    strict: true
+    esModuleInterop: true
+    paths:
+      "@components/*": ["components/*"]
+      "@hooks/*": ["hooks/*"]
+      "@lib/*": ["lib/*"]
+      "@public/*": ["public/*"]
+      "@styles/*": ["styles/*"]
+      "@context/*": ["context/*"]
+      "@stores/*": ["stores/*"]
+      "@firebase/*": ["firebase/*"]
+  javascript:
+    jsx: true
+
+framework:
+  nextjs:
+    version: 13
+    appDir: true
+    typescript: true
+    tailwindcss: true
+    eslint: true
+  react:
+    version: 18
+    hooks: true
+    functionalComponents: true
+
+# Coding conventions
+style:
+  indentation: 2
+  quotes: single
+  max_line_length: 100
+  semi_colons: true
+  trailing_commas: all
+  bracket_spacing: true
+  arrow_parens: always
+
+# Assistant behavior customization
+assistant:
+  enable_tailwind_suggestions: true
+  enable_radix_ui_suggestions: true
+  enable_firebase_suggestions: true
+  enable_zustand_suggestions: true
+  enable_typescript_strict_mode: true
+  enable_eslint_rules: true
+  prefer_functional_components: true
+  suggest_react_hooks: true
+  generate_jsdoc_comments: true
+  prioritize_custom_hooks: true
+  prioritize_context_usage: true
+
+# ESLint integration
+eslint:
+  config_file: .eslintrc.json
+  auto_fix_on_save: true
+
+# Tailwind CSS configuration
+tailwindcss:
+  config_file: tailwind.config.js
+  class_suggestions: true
+
+# File templates for new files
+templates:
+  component:
+    path: components/{ComponentName}.tsx
+    content: |
+      import React from 'react';
+
+      interface {ComponentName}Props {
+        // Define props here
+      }
+
+      const {ComponentName}: React.FC<{ComponentName}Props> = ({}) => {
+        return (
+          <div>
+            {/* Component code */}
+          </div>
+        );
+      };
+
+      export default {ComponentName};
+
+  page:
+    path: app/{PageName}/page.tsx
+    content: |
+      import React from 'react';
+
+      const {PageName}Page = () => {
+        return (
+          <div>
+            <h1>{PageName} Page</h1>
+            {/* Page content */}
+          </div>
+        );
+      };
+
+      export default {PageName}Page;
+
+  custom_hook:
+    path: hooks/use{HookName}.ts
+    content: |
+      import { useState, useEffect } from 'react';
+
+      const use{HookName} = () => {
+        // Hook logic
+      };
+
+      export default use{HookName};
+
+# Testing configurations
+testing:
+  framework: jest
+  react_testing_library: true
+  coverage: true
+  paths:
+    - "**/*.test.ts"
+    - "**/*.test.tsx"
+
+# Firebase integration settings
+firebase:
+  config_file: firebaseConfig.ts
+  enable_firestore_suggestions: true
+  enable_auth_suggestions: true
+  enable_storage_suggestions: true
+
+# Zustand state management
+zustand:
+  enable_store_suggestions: true
+  default_store_path: stores/
+
+# Radix UI components
+radix_ui:
+  components_path: components/ui/
+  suggest_components: true
+
+# Other settings
+other:
+  enable_path_aliases: true
+  path_aliases:
+    "@components": "./components"
+    "@hooks": "./hooks"
+    "@lib": "./lib"
+    "@public": "./public"
+    "@styles": "./styles"
+    "@context": "./context"
+    "@stores": "./stores"
+    "@firebase": "./firebase"
+  generate_documentation: true
+  documentation_style: jsdoc
