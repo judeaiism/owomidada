@@ -4,6 +4,7 @@ import { Card, CardContent, CardFooter } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { ShoppingCart, Eye, MessageCircle, Bell, DollarSign, Heart, UserPlus, User, Facebook } from 'lucide-react'
+import Image from 'next/image'
 
 interface Product {
   id: string
@@ -11,6 +12,10 @@ interface Product {
   category: string
   price: number
   description: string
+  image: string
+  condition: string
+  location: string
+  listingType: string
 }
 
 interface ProductCardProps {
@@ -72,6 +77,24 @@ function ProductCard({ product }: ProductCardProps) {
   return (
     <Card className="w-full flex flex-col">
       <CardContent className="flex-grow p-4">
+        {product.image && (
+          <div className="w-full h-48 relative mb-2">
+            {product.image.startsWith('data:') ? (
+              <img 
+                src={product.image} 
+                alt={product.name}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <Image 
+                src={product.image}
+                alt={product.name}
+                layout="fill"
+                objectFit="cover"
+              />
+            )}
+          </div>
+        )}
         <h3 className="text-lg font-semibold mb-1 line-clamp-1">{product.name}</h3>
         <p className="text-sm text-gray-600 mb-2">{product.category}</p>
         <p className="text-xl font-bold">${product.price.toFixed(2)}</p>
@@ -95,6 +118,7 @@ interface ProductListProps {
 }
 
 const ProductList: React.FC<ProductListProps> = ({ products }) => {
+  console.log('Rendering ProductList with products:', products);
   return (
     <div className="container mx-auto px-4 py-8">
       <h2 className="text-3xl font-bold mb-6">Product List</h2>

@@ -1,11 +1,12 @@
 "use client"
 
+import { useEffect } from 'react'
 import Header from '../components/Header'
 import SearchBar from '../components/SearchBar'
 import ProductList from '../components/ProductList'
 import HamburgerMenu from '../components/HamburgerMenu'
 import CategoryList from '../components/CategoryList'
-import { useState, ChangeEvent, useEffect } from 'react'
+import { useState, ChangeEvent } from 'react'
 import useProductStore from '@/stores/productStore'
 import { CartProvider } from '../context/CartContext'
 import PulsatingButton from '../components/magicui/pulsating-button'
@@ -14,11 +15,11 @@ export default function Home() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isCategoryListOpen, setIsCategoryListOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
-  const { items: products, fetchProducts } = useProductStore()
+  const products = useProductStore((state) => state.items)
 
   useEffect(() => {
-    fetchProducts()
-  }, [fetchProducts])
+    console.log('Products in Home component:', products)
+  }, [products])
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen)

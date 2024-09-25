@@ -1,7 +1,6 @@
 "use client"
 
-import React from 'react'
-import { useState } from "react"
+import React, { useState } from 'react'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -23,13 +22,41 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogDescription,
 } from "@/components/ui/dialog"
 import { ImagePlus, Loader2, X } from "lucide-react"
 import { Checkbox } from "@/components/ui/checkbox"
+import useProductStore from '@/stores/productStore';
+import { useRouter } from 'next/navigation';
 
 export default function CreateListing() {
   const [images, setImages] = useState<string[]>([])
   const [isPublishing, setIsPublishing] = useState(false)
+  const addProduct = useProductStore((state) => state.addProduct);
+  const router = useRouter();
+
+  const [formData, setFormData] = useState({
+    title: '',
+    price: '',
+    category: '',
+    condition: 'new',
+    description: '',
+    location: '',
+    listingType: 'single'
+  });
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSelectChange = (value: string) => {
+    setFormData(prev => ({ ...prev, category: value }));
+  };
+
+  const handleRadioChange = (name: string, value: string) => {
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
@@ -52,12 +79,34 @@ export default function CreateListing() {
 
   const handlePublish = () => {
     setIsPublishing(true)
-    // Simulate publishing process
-    setTimeout(() => {
-      setIsPublishing(false)
-      // Here you would typically handle the actual submission
-      alert("Listing published successfully!")
-    }, 2000)
+    const newProduct = {
+      name: formData.title,
+      price: parseFloat(formData.price),
+      category: formData.category,
+      description: formData.description,
+      image: images[0] || '',
+      condition: formData.condition,
+      location: formData.location,
+      listingType: formData.listingType,
+    };
+
+    addProduct(newProduct);
+
+    setIsPublishing(false);
+    alert("Listing published successfully!");
+    // Reset form
+    setFormData({
+      title: '',
+      price: '',
+      category: '',
+      condition: 'new',
+      description: '',
+      location: '',
+      listingType: 'single'
+    });
+    setImages([]);
+    // Navigate back to the home page
+    router.push('/');
   }
 
   return (
@@ -100,19 +149,19 @@ export default function CreateListing() {
       {/* Title */}
       <div className="mb-4">
         <Label htmlFor="title">Title</Label>
-        <Input id="title" placeholder="Enter listing title" />
+        <Input id="title" name="title" value={formData.title} onChange={handleInputChange} placeholder="Enter listing title" />
       </div>
 
       {/* Price */}
       <div className="mb-4">
         <Label htmlFor="price">Price</Label>
-        <Input id="price" type="number" placeholder="Enter price" />
+        <Input id="price" name="price" type="number" value={formData.price} onChange={handleInputChange} placeholder="Enter price" />
       </div>
 
       {/* Category */}
       <div className="mb-4">
         <Label htmlFor="category">Category</Label>
-        <Select>
+        <Select onValueChange={handleSelectChange} value={formData.category}>
           <SelectTrigger id="category">
             <SelectValue placeholder="Select a category" />
           </SelectTrigger>
@@ -129,7 +178,7 @@ export default function CreateListing() {
       {/* Condition */}
       <div className="mb-4">
         <Label>Condition</Label>
-        <RadioGroup defaultValue="new">
+        <RadioGroup value={formData.condition} onValueChange={(value) => handleRadioChange('condition', value)}>
           <div className="flex flex-wrap gap-4 mt-2">
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="new" id="new" />
@@ -158,19 +207,19 @@ export default function CreateListing() {
       {/* Description */}
       <div className="mb-4">
         <Label htmlFor="description">Description</Label>
-        <Textarea id="description" placeholder="Describe your item" />
+        <Textarea id="description" name="description" value={formData.description} onChange={handleInputChange} placeholder="Describe your item" />
       </div>
 
       {/* Location */}
       <div className="mb-4">
         <Label htmlFor="location">Location</Label>
-        <Input id="location" placeholder="Enter location" />
+        <Input id="location" name="location" value={formData.location} onChange={handleInputChange} placeholder="Enter location" />
       </div>
 
       {/* Single item / Bulk */}
       <div className="mb-4">
         <Label>Listing Type</Label>
-        <RadioGroup defaultValue="single">
+        <RadioGroup value={formData.listingType} onValueChange={(value) => handleRadioChange('listingType', value)}>
           <div className="flex gap-4 mt-2">
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="single" id="single" />
@@ -193,6 +242,9 @@ export default function CreateListing() {
           <DialogContent>
             <DialogHeader>
               <DialogTitle>Select Shipping Options</DialogTitle>
+              <DialogDescription>
+                Choose the shipping options you want to offer for this listing.
+              </DialogDescription>
             </DialogHeader>
             <div className="grid gap-4 py-4">
               <div className="flex items-center space-x-2">

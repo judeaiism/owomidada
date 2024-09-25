@@ -1,36 +1,30 @@
 import { create } from 'zustand'
 
-interface Product {
+export interface Product {
   id: string;
   name: string;
   price: number;
   category: string;
   image: string;
   description: string;
+  condition: string;
+  location: string;
+  listingType: string;
 }
 
 interface ProductsState {
   items: Product[];
-  addProduct: (product: Product) => void;
-  fetchProducts: () => void;
+  addProduct: (product: Omit<Product, 'id'>) => void;
 }
 
 const useProductStore = create<ProductsState>((set) => ({
   items: [],
-  addProduct: (product) => set((state) => ({ items: [...state.items, product] })),
-  fetchProducts: () => {
-    const mockProducts: Product[] = [
-      {
-        id: '1',
-        name: 'Sample Product',
-        price: 19.99,
-        category: 'Electronics',
-        image: 'https://example.com/sample-image.jpg',
-        description: 'This is a sample product description.',
-      },
-      // Add more mock products as needed
-    ];
-    set({ items: mockProducts });
+  addProduct: (product) => {
+    const newProduct = { ...product, id: Date.now().toString() };
+    set((state) => ({ 
+      items: [...state.items, newProduct] 
+    }));
+    console.log('Product added:', newProduct);
   },
 }));
 
