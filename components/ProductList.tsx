@@ -1,10 +1,93 @@
 import React from 'react'
+import { useState } from 'react'
+import { Card, CardContent, CardFooter } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
+import { ShoppingCart, Eye, MessageCircle, Bell, DollarSign, Heart, UserPlus, User, Facebook } from 'lucide-react'
 
 interface Product {
-  id: string;
-  name: string;
-  price: number;
-  description: string;
+  id: string
+  name: string
+  category: string
+  price: number
+  description: string
+}
+
+interface ProductCardProps {
+  product: Product
+}
+
+function ViewDetailsModal({ product }: ProductCardProps) {
+  const [isOpen, setIsOpen] = useState(false)
+
+  return (
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <DialogTrigger asChild>
+        <Button variant="outline" className="w-full" onClick={() => setIsOpen(true)}>
+          <Eye className="mr-2 h-4 w-4" />
+          View Details
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle>{product.name}</DialogTitle>
+        </DialogHeader>
+        <div className="grid gap-4 py-4">
+          <p>{product.description}</p>
+          <Button variant="outline" className="justify-start">
+            <MessageCircle className="mr-2 h-4 w-4" />
+            Message seller
+          </Button>
+          <Button variant="outline" className="justify-start">
+            <Bell className="mr-2 h-4 w-4" />
+            Set alert for listing
+          </Button>
+          <Button variant="outline" className="justify-start">
+            <DollarSign className="mr-2 h-4 w-4" />
+            Send offer
+          </Button>
+          <Button variant="outline" className="justify-start">
+            <Heart className="mr-2 h-4 w-4" />
+            Save product
+          </Button>
+          <Button variant="outline" className="justify-start">
+            <UserPlus className="mr-2 h-4 w-4" />
+            Follow seller
+          </Button>
+          <Button variant="outline" className="justify-start">
+            <User className="mr-2 h-4 w-4" />
+            See seller details
+          </Button>
+          <Button className="justify-start bg-blue-600 hover:bg-blue-700 text-white">
+            <Facebook className="mr-2 h-4 w-4" />
+            Facebook Marketplace Listing
+          </Button>
+        </div>
+      </DialogContent>
+    </Dialog>
+  )
+}
+
+function ProductCard({ product }: ProductCardProps) {
+  return (
+    <Card className="w-full flex flex-col">
+      <CardContent className="flex-grow p-4">
+        <h3 className="text-lg font-semibold mb-1 line-clamp-1">{product.name}</h3>
+        <p className="text-sm text-gray-600 mb-2">{product.category}</p>
+        <p className="text-xl font-bold">${product.price.toFixed(2)}</p>
+      </CardContent>
+      <CardFooter className="p-4 pt-0 flex flex-col gap-2">
+        <Button 
+          variant="default" 
+          className="w-full bg-green-500 hover:bg-green-600 text-white"
+        >
+          <ShoppingCart className="mr-2 h-4 w-4" />
+          Add to Cart
+        </Button>
+        <ViewDetailsModal product={product} />
+      </CardFooter>
+    </Card>
+  )
 }
 
 interface ProductListProps {
@@ -13,17 +96,13 @@ interface ProductListProps {
 
 const ProductList: React.FC<ProductListProps> = ({ products }) => {
   return (
-    <div className="product-list">
-      <h2>Product List</h2>
-      <ul>
+    <div className="container mx-auto px-4 py-8">
+      <h2 className="text-3xl font-bold mb-6">Product List</h2>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {products.map((product) => (
-          <li key={product.id}>
-            <h3>{product.name}</h3>
-            <p>Price: ${product.price.toFixed(2)}</p>
-            <p>{product.description}</p>
-          </li>
+          <ProductCard key={product.id} product={product} />
         ))}
-      </ul>
+      </div>
     </div>
   )
 }
