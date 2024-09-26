@@ -1,24 +1,43 @@
-Welcome to the NextJS base template bootstrapped using the `create-next-app`. This template supports TypeScript, but you can use normal JavaScript as well.
+# Owomida Project Overview
 
-## Getting Started
+## Project Structure
 
-Hit the run button to start the development server.
+// ... (keep the existing structure, but remove cart.tsx from the list)
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+## Dependencies
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on `/api/hello`. This endpoint can be edited in `pages/api/hello.ts`.
+// ... (keep the existing dependencies)
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+## Key Components
 
-## Learn More
+1. Header (`components/Header.tsx`)
+2. SearchBar (`components/SearchBar.tsx`)
+3. ProductList (`components/ProductList.tsx`)
+4. HamburgerMenu (`components/HamburgerMenu.tsx`)
+5. CategoryList (`components/CategoryList.tsx`)
+6. Various UI components in `components/ui/`
 
-To learn more about Next.js, take a look at the following resources:
+## Pages
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. Home Page (`app/page.tsx`)
+2. Category Page (`app/categories/[categoryName]/page.tsx`)
+3. Create Listing Page (`app/create-listing.tsx`)
 
-## Productionizing your Next App
+// ... (keep the rest of the README content, removing any cart-related information)
 
-To make your next App run smoothly in production make sure to deploy your project with [Repl Deployments](https://docs.replit.com/hosting/deployments/about-deployments)!
+## Notes
 
-You can also produce a production build by running `npm run build` and [changing the run command](https://docs.replit.com/programming-ide/configuring-repl#run) to `npm run start`.
+- The project is a Next.js application using the App Router.
+- It implements a marketplace-like structure with product listings and categories.
+- Firebase is used for backend services.
+- The UI is built with a combination of custom components and Radix UI primitives.
+- Tailwind CSS is used for styling, with some custom configurations.
+- The project includes internationalization support (y18n).
+
+## TODO
+
+- Implement authentication flow
+- Add more robust error handling
+- Implement server-side rendering for product listings
+- Optimize images and implement lazy loading
+- Add unit and integration tests

@@ -39,7 +39,6 @@ firebase:
 firebase-database.js
 app:
 _app.tsx
-cart.tsx
 categories:
 '[categoryName]':
 page.tsx
@@ -68,8 +67,6 @@ resizable.tsx
 table.tsx
 tabs.tsx
 toaster.tsx
-context:
-CartContext.ts
 hooks:
 use-toast.ts
 lib:
@@ -137,8 +134,7 @@ Dev dependencies include TypeScript, ESLint, and various Radix UI packages.
 
 1. Home Page (`app/page.tsx`)
 2. Category Page (`app/categories/[categoryName]/page.tsx`)
-3. Cart Page (`app/cart.tsx`)
-4. Create Listing Page (`app/create-listing.tsx`)
+3. Create Listing Page (`app/create-listing.tsx`)
 
 ## State Management
 
@@ -170,8 +166,6 @@ json
 "lint": "next lint"
 }
 
-
-
 ## Notes
 
 - The project is a Next.js application using the App Router.
@@ -180,12 +174,10 @@ json
 - The UI is built with a combination of custom components and Radix UI primitives.
 - Tailwind CSS is used for styling, with some custom configurations.
 - The project includes internationalization support (y18n).
-- There's a custom implementation for a shopping cart (CartContext).
 
 ## TODO
 
 - Implement authentication flow
-- Complete the cart functionality
 - Add more robust error handling
 - Implement server-side rendering for product listings
 - Optimize images and implement lazy loading
