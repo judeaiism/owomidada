@@ -1,5 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
+import { FaUser, FaPlus } from 'react-icons/fa'; // Import icons
 
 interface HamburgerMenuProps {
   isOpen: boolean;
@@ -11,8 +12,8 @@ const HamburgerMenu: React.FC<HamburgerMenuProps> = ({ isOpen, onClose }) => {
 
   return (
     <div className="fixed inset-0 bg-gray-600 bg-opacity-50 z-50 flex justify-end">
-      <div className="w-64 bg-white h-full shadow-lg p-4">
-        <button onClick={onClose} className="float-right text-2xl">&times;</button>
+      <div className="w-64 bg-white h-full shadow-lg p-4 flex flex-col">
+        <button onClick={onClose} className="self-end text-2xl">&times;</button>
         <nav className="mt-8">
           <ul className="space-y-4">
             <li>
@@ -21,18 +22,22 @@ const HamburgerMenu: React.FC<HamburgerMenuProps> = ({ isOpen, onClose }) => {
               </Link>
             </li>
             <li>
-              <Link href="/products" className="text-blue-600 hover:text-blue-800">
-                Products
+              <Link href="/profile" className="flex items-center text-blue-600 hover:text-blue-800">
+                <FaUser className="mr-2" />
+                Profile
               </Link>
             </li>
             <li>
-              <Link href="/about" className="text-blue-600 hover:text-blue-800">
-                About
+              <Link href="/listing" className="flex items-center text-blue-600 hover:text-blue-800">
+                <FaPlus className="mr-2" />
+                Create Listing
               </Link>
             </li>
             <li>
-              <Link href="/contact" className="text-blue-600 hover:text-blue-800">
-                Contact
+              <Link href="/login" className="block w-full">
+                <button className="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition duration-300">
+                  Login / Sign Up
+                </button>
               </Link>
             </li>
           </ul>
