@@ -1,8 +1,11 @@
+'use client';
+
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from '@/hooks/useAuth';
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 type AuthFormProps = {
   isLogin: boolean;
@@ -12,7 +15,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ isLogin }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
-  const { signUp, logIn } = useAuth();
+  const { signUp, logIn, error } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,6 +28,11 @@ const AuthForm: React.FC<AuthFormProps> = ({ isLogin }) => {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
+      {error && (
+        <Alert variant="destructive">
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      )}
       {!isLogin && (
         <div>
           <Label htmlFor="name">Name</Label>
