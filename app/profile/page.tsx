@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { useAuth } from "@/hooks/useAuth"
+import ProtectedRoute from '@/components/ProtectedRoute'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -15,6 +16,8 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { AlertCircle, Camera, HelpCircle, MessageSquare, LogOut } from 'lucide-react'
 import { useToast } from "@/hooks/use-toast"
 import Link from 'next/link'
+import { storage } from '@/lib/firebase';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 // Mock API calls
 const mockApiCall = (data: any, delay = 1000) => new Promise((resolve) => setTimeout(() => resolve(data), delay));
@@ -22,20 +25,32 @@ const mockApiCall = (data: any, delay = 1000) => new Promise((resolve) => setTim
 // Verification URL - replace with your actual URL
 const VERIFICATION_URL = "https://your-verification-url.com";
 
+interface UserData {
+  firstName: string;
+  lastName: string;
+  displayName: string;
+  email: string;
+  phone: string;
+  dob: string;
+  gender: string;
+  bio: string;
+  // Add any other fields that might be in your user data
+}
+
 export default function ProfilePage() {
   const [activeTab, setActiveTab] = useState("personal-info")
   const [profileVerified, setProfileVerified] = useState(false)
-  const [profilePicture, setProfilePicture] = useState("/placeholder-avatar.jpg")
+  const [profilePicture, setProfilePicture] = useState("/images/placeholder-avatar.jpg")
   const { toast } = useToast();
   const { user, getUserData, logOut, updateProfilePicture } = useAuth();
-  const [userData, setUserData] = useState<any>(null);
+  const [userData, setUserData] = useState<UserData | null>(null);
 
   useEffect(() => {
     const fetchUserData = async () => {
       if (user) {
         const data = await getUserData(user.uid);
         if (data) {
-          setUserData(data);
+          setUserData(data as UserData);  // Type assertion here
           if (data.profilePicture) {
             setProfilePicture(data.profilePicture);
           }
@@ -66,6 +81,10 @@ export default function ProfilePage() {
           try {
             const newProfilePictureUrl = await updateProfilePicture(user.uid, file);
             setProfilePicture(newProfilePictureUrl);
+            setUserData((prevData: any) => ({
+              ...prevData,
+              profilePicture: newProfilePictureUrl
+            }));
             toast({
               title: "Profile picture updated",
               description: "Your new profile picture has been set successfully.",
@@ -110,81 +129,92 @@ export default function ProfilePage() {
   };
 
   return (
-    <div className="container mx-auto p-6">
-      <header className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Welcome, {userData?.firstName || 'User'}</h1>
-        <div className="flex items-center space-x-4">
-          <Button variant="outline" onClick={handleSupportRequest}>
-            <HelpCircle className="mr-2 h-4 w-4" />
-            Help & Support
-          </Button>
-          {!profileVerified && (
-            <Link href={VERIFICATION_URL} passHref>
-              <Button>
-                <AlertCircle className="mr-2 h-4 w-4" />
-                Verify Profile
-              </Button>
-            </Link>
-          )}
-          {profileVerified && (
-            <Badge variant="secondary">
-              Verified Profile
-            </Badge>
-          )}
-          <Button variant="destructive" onClick={handleSignOut}>
-            <LogOut className="mr-2 h-4 w-4" />
-            Sign Out
-          </Button>
-        </div>
-      </header>
-
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card className="col-span-1">
-          <CardHeader>
-            <CardTitle>Profile Picture</CardTitle>
-          </CardHeader>
-          <CardContent className="flex flex-col items-center">
-            <Avatar className="w-32 h-32">
-              <AvatarImage src={profilePicture} alt="Profile Picture" />
-              <AvatarFallback>JD</AvatarFallback>
-            </Avatar>
-            <Button variant="outline" className="mt-4" onClick={handleChangePhoto}>
-              <Camera className="mr-2 h-4 w-4" />
-              Change Photo
+    <ProtectedRoute>
+      <div className="container mx-auto p-6">
+        <header className="flex justify-between items-center mb-6">
+          <h1 className="text-3xl font-bold">Welcome, {userData?.firstName || 'User'}</h1>
+          <div className="flex items-center space-x-4">
+            <Button variant="outline" onClick={handleSupportRequest}>
+              <HelpCircle className="mr-2 h-4 w-4" />
+              Help & Support
             </Button>
-          </CardContent>
-        </Card>
+            {!profileVerified && (
+              <Link href={VERIFICATION_URL} passHref>
+                <Button>
+                  <AlertCircle className="mr-2 h-4 w-4" />
+                  Verify Profile
+                </Button>
+              </Link>
+            )}
+            {profileVerified && (
+              <Badge variant="secondary">
+                Verified Profile
+              </Badge>
+            )}
+            <Button variant="destructive" onClick={handleSignOut}>
+              <LogOut className="mr-2 h-4 w-4" />
+              Sign Out
+            </Button>
+          </div>
+        </header>
 
-        <Card className="col-span-1 md:col-span-2">
-          <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="grid w-full grid-cols-4">
-              <TabsTrigger value="personal-info">Personal Info</TabsTrigger>
-              <TabsTrigger value="seller-settings">Seller Settings</TabsTrigger>
-              <TabsTrigger value="security">Security</TabsTrigger>
-              <TabsTrigger value="preferences">Preferences</TabsTrigger>
-            </TabsList>
-            <TabsContent value="personal-info">
-              <PersonalInfoTab />
-            </TabsContent>
-            <TabsContent value="seller-settings">
-              <SellerSettingsTab />
-            </TabsContent>
-            <TabsContent value="security">
-              <SecurityTab />
-            </TabsContent>
-            <TabsContent value="preferences">
-              <PreferencesTab />
-            </TabsContent>
-          </Tabs>
-        </Card>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <Card className="col-span-1">
+            <CardHeader>
+              <CardTitle>Profile Picture</CardTitle>
+            </CardHeader>
+            <CardContent className="flex flex-col items-center">
+              <Avatar className="w-32 h-32">
+                <AvatarImage src={profilePicture} alt="Profile Picture" />
+                <AvatarFallback>{userData?.firstName?.[0]}{userData?.lastName?.[0]}</AvatarFallback>
+              </Avatar>
+              <Button variant="outline" className="mt-4" onClick={handleChangePhoto}>
+                <Camera className="mr-2 h-4 w-4" />
+                Change Photo
+              </Button>
+            </CardContent>
+          </Card>
+
+          <Card className="col-span-1 md:col-span-2">
+            <Tabs value={activeTab} onValueChange={setActiveTab}>
+              <TabsList className="grid w-full grid-cols-4">
+                <TabsTrigger value="personal-info">Personal Info</TabsTrigger>
+                <TabsTrigger value="seller-settings">Seller Settings</TabsTrigger>
+                <TabsTrigger value="security">Security</TabsTrigger>
+                <TabsTrigger value="preferences">Preferences</TabsTrigger>
+              </TabsList>
+              <TabsContent value="personal-info">
+                <PersonalInfoTab 
+                  userData={userData || {} as UserData} 
+                  setUserData={setUserData} 
+                />
+              </TabsContent>
+              <TabsContent value="seller-settings">
+                <SellerSettingsTab />
+              </TabsContent>
+              <TabsContent value="security">
+                <SecurityTab />
+              </TabsContent>
+              <TabsContent value="preferences">
+                <PreferencesTab />
+              </TabsContent>
+            </Tabs>
+          </Card>
+        </div>
       </div>
-    </div>
+    </ProtectedRoute>
   )
 }
 
-function PersonalInfoTab() {
+function PersonalInfoTab({ 
+  userData, 
+  setUserData 
+}: { 
+  userData: UserData, 
+  setUserData: React.Dispatch<React.SetStateAction<UserData | null>> 
+}) {
   const { toast } = useToast();
-  const { user, getUserData } = useAuth();
+  const { user, updateUserData } = useAuth();
   const [personalInfo, setPersonalInfo] = useState({
     firstName: "",
     lastName: "",
@@ -197,25 +227,19 @@ function PersonalInfoTab() {
   });
 
   useEffect(() => {
-    const fetchUserData = async () => {
-      if (user) {
-        const data = await getUserData(user.uid);
-        if (data) {
-          setPersonalInfo({
-            firstName: data.firstName || "",
-            lastName: data.lastName || "",
-            displayName: data.displayName || "",
-            email: data.email || "",
-            phone: data.phone || "",
-            dob: data.dob || "",
-            gender: data.gender || "",
-            bio: data.bio || ""
-          });
-        }
-      }
-    };
-    fetchUserData();
-  }, [user, getUserData]);
+    if (userData) {
+      setPersonalInfo(prevInfo => ({
+        firstName: userData.firstName || prevInfo.firstName,
+        lastName: userData.lastName || prevInfo.lastName,
+        displayName: userData.displayName || prevInfo.displayName,
+        email: userData.email || prevInfo.email,
+        phone: userData.phone || prevInfo.phone,
+        dob: userData.dob || prevInfo.dob,
+        gender: userData.gender || prevInfo.gender,
+        bio: userData.bio || prevInfo.bio
+      }));
+    }
+  }, [userData]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -239,11 +263,28 @@ function PersonalInfoTab() {
       return;
     }
 
-    await mockApiCall({ success: true });
-    toast({
-      title: "Personal information updated",
-      description: "Your personal information has been saved successfully.",
-    })
+    try {
+      if (user) {
+        await updateUserData(user.uid, personalInfo);
+        setUserData(prevData => {
+          if (prevData === null) {
+            return personalInfo;
+          }
+          return { ...prevData, ...personalInfo };
+        });
+        toast({
+          title: "Personal information updated",
+          description: "Your personal information has been saved successfully.",
+        });
+      }
+    } catch (error) {
+      console.error('Error updating user data:', error);
+      toast({
+        title: "Error",
+        description: "Failed to update personal information. Please try again.",
+        variant: "destructive"
+      });
+    }
   };
 
   return (
@@ -281,8 +322,6 @@ function PersonalInfoTab() {
             <option value="">Select Gender</option>
             <option value="male">Male</option>
             <option value="female">Female</option>
-            <option value="non-binary">Non-binary</option>
-            <option value="prefer-not-to-say">Prefer not to say</option>
           </select>
         </div>
         <div>
@@ -297,16 +336,36 @@ function PersonalInfoTab() {
 
 function SellerSettingsTab() {
   const { toast } = useToast();
+  const { user, updateUserData } = useAuth();
   const [sellerSettings, setSellerSettings] = useState({
     storeName: "",
     storeDescription: "",
     shippingPolicy: "",
     returnPolicy: ""
   });
+  const [storeLogoFile, setStoreLogoFile] = useState<File | null>(null);
+  const [storeBannerFile, setStoreBannerFile] = useState<File | null>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setSellerSettings(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, fileType: 'logo' | 'banner') => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (fileType === 'logo') {
+        setStoreLogoFile(file);
+      } else {
+        setStoreBannerFile(file);
+      }
+    }
+  };
+
+  const uploadFile = async (file: File, path: string): Promise<string> => {
+    const storageRef = ref(storage, path);
+    const uploadTask = await uploadBytes(storageRef, file);
+    return getDownloadURL(uploadTask.ref);
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -317,31 +376,50 @@ function SellerSettingsTab() {
       .filter(([key, value]) => value === "")
       .map(([key]) => key);
 
-    if (emptyFields.length > 0) {
+    if (emptyFields.length > 0 || !storeLogoFile || !storeBannerFile) {
       toast({
         title: "Incomplete form",
-        description: `Please fill in the following fields: ${emptyFields.join(", ")}`,
+        description: `Please fill in all required fields and upload both logo and banner.`,
         variant: "destructive"
       });
       return;
     }
 
-    await mockApiCall({ success: true });
-    toast({
-      title: "Seller settings updated",
-      description: "Your seller settings have been saved successfully.",
-    })
-  };
-
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, fileType: string) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      // Simulating file upload
-      await mockApiCall({ success: true });
+    if (!user) {
       toast({
-        title: `${fileType} uploaded`,
-        description: `Your ${fileType.toLowerCase()} has been uploaded successfully.`,
-      })
+        title: "Error",
+        description: "You must be logged in to save seller settings.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    try {
+      // Upload logo and banner
+      const logoUrl = await uploadFile(storeLogoFile, `store_logos/${user.uid}`);
+      const bannerUrl = await uploadFile(storeBannerFile, `store_banners/${user.uid}`);
+
+      // Prepare data to save
+      const dataToSave = {
+        ...sellerSettings,
+        storeLogo: logoUrl,
+        storeBanner: bannerUrl
+      };
+
+      // Update user data in Firestore
+      await updateUserData(user.uid, dataToSave);
+
+      toast({
+        title: "Seller settings updated",
+        description: "Your seller settings have been saved successfully.",
+      });
+    } catch (error) {
+      console.error('Error saving seller settings:', error);
+      toast({
+        title: "Error",
+        description: "Failed to save seller settings. Please try again.",
+        variant: "destructive"
+      });
     }
   };
 
@@ -358,11 +436,11 @@ function SellerSettingsTab() {
         </div>
         <div>
           <Label htmlFor="storeLogo">Store Logo *</Label>
-          <Input id="storeLogo" type="file" accept="image/*" onChange={(e) => handleFileUpload(e, 'Logo')} required />
+          <Input id="storeLogo" type="file" accept="image/*" onChange={(e) => handleFileChange(e, 'logo')} required />
         </div>
         <div>
           <Label htmlFor="storeBanner">Store Banner *</Label>
-          <Input id="storeBanner" type="file" accept="image/*" onChange={(e) => handleFileUpload(e, 'Banner')} required />
+          <Input id="storeBanner" type="file" accept="image/*" onChange={(e) => handleFileChange(e, 'banner')} required />
         </div>
         <div>
           <Label htmlFor="shippingPolicy">Shipping Policy *</Label>

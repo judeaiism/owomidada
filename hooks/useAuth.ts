@@ -8,7 +8,7 @@ import { updateDoc } from 'firebase/firestore';
 import { storage } from '@/lib/firebase';
 
 export const useAuth = () => {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<User | null | undefined>(undefined);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
@@ -92,5 +92,15 @@ export const useAuth = () => {
     }
   };
 
-  return { user, signUp, logIn, logOut, error, getUserData, updateProfilePicture };
+  const updateUserData = async (userId: string, userData: any) => {
+    try {
+      const userDocRef = doc(firestore, 'users', userId);
+      await updateDoc(userDocRef, userData);
+    } catch (error) {
+      console.error('Error updating user data:', error);
+      throw error;
+    }
+  };
+
+  return { user, signUp, logIn, logOut, error, getUserData, updateProfilePicture, updateUserData };
 };
