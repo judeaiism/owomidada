@@ -336,15 +336,43 @@ function PersonalInfoTab({
 
 function SellerSettingsTab() {
   const { toast } = useToast();
-  const { user, updateUserData } = useAuth();
+  const { user, updateSellerSettings, getUserData } = useAuth();
   const [sellerSettings, setSellerSettings] = useState({
     storeName: "",
     storeDescription: "",
     shippingPolicy: "",
-    returnPolicy: ""
+    returnPolicy: "",
+    storeLogo: "",
+    storeBanner: ""
   });
   const [storeLogoFile, setStoreLogoFile] = useState<File | null>(null);
   const [storeBannerFile, setStoreBannerFile] = useState<File | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchSellerSettings = async () => {
+      if (user) {
+        try {
+          const userData = await getUserData(user.uid);
+          if (userData && userData.sellerSettings) {
+            setSellerSettings(userData.sellerSettings);
+          }
+        } catch (error) {
+          console.error('Error fetching seller settings:', error);
+          toast({
+            title: "Error",
+            description: "Failed to load seller settings. Please try again.",
+            variant: "destructive"
+          });
+        } finally {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    fetchSellerSettings();
+  }, [user, getUserData, toast]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -370,18 +398,20 @@ function SellerSettingsTab() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setIsSubmitting(true);
 
     // Check if all fields are filled
     const emptyFields = Object.entries(sellerSettings)
-      .filter(([key, value]) => value === "")
+      .filter(([key, value]) => value === "" && key !== 'storeLogo' && key !== 'storeBanner')
       .map(([key]) => key);
 
-    if (emptyFields.length > 0 || !storeLogoFile || !storeBannerFile) {
+    if (emptyFields.length > 0) {
       toast({
         title: "Incomplete form",
-        description: `Please fill in all required fields and upload both logo and banner.`,
+        description: `Please fill in all required fields.`,
         variant: "destructive"
       });
+      setIsSubmitting(false);
       return;
     }
 
@@ -391,23 +421,31 @@ function SellerSettingsTab() {
         description: "You must be logged in to save seller settings.",
         variant: "destructive"
       });
+      setIsSubmitting(false);
       return;
     }
 
     try {
-      // Upload logo and banner
-      const logoUrl = await uploadFile(storeLogoFile, `store_logos/${user.uid}`);
-      const bannerUrl = await uploadFile(storeBannerFile, `store_banners/${user.uid}`);
+      let updatedSettings = { ...sellerSettings };
 
-      // Prepare data to save
-      const dataToSave = {
-        ...sellerSettings,
-        storeLogo: logoUrl,
-        storeBanner: bannerUrl
-      };
+      // Upload new logo if provided
+      if (storeLogoFile) {
+        const logoUrl = await uploadFile(storeLogoFile, `store_logos/${user.uid}`);
+        updatedSettings.storeLogo = logoUrl;
+      }
 
-      // Update user data in Firestore
-      await updateUserData(user.uid, dataToSave);
+      // Upload new banner if provided
+      if (storeBannerFile) {
+        const bannerUrl = await uploadFile(storeBannerFile, `store_banners/${user.uid}`);
+        updatedSettings.storeBanner = bannerUrl;
+      }
+
+      // Update seller settings in Firestore
+      await updateSellerSettings(user.uid, updatedSettings);
+
+      setSellerSettings(updatedSettings);
+      setStoreLogoFile(null);
+      setStoreBannerFile(null);
 
       toast({
         title: "Seller settings updated",
@@ -420,8 +458,14 @@ function SellerSettingsTab() {
         description: "Failed to save seller settings. Please try again.",
         variant: "destructive"
       });
+    } finally {
+      setIsSubmitting(false);
     }
   };
+
+  if (isLoading) {
+    return <div>Loading seller settings...</div>;
+  }
 
   return (
     <ScrollArea className="h-[400px] w-full rounded-md border p-4">
@@ -435,12 +479,14 @@ function SellerSettingsTab() {
           <Textarea id="storeDescription" name="storeDescription" value={sellerSettings.storeDescription} onChange={handleChange} placeholder="Describe your store..." required />
         </div>
         <div>
-          <Label htmlFor="storeLogo">Store Logo *</Label>
-          <Input id="storeLogo" type="file" accept="image/*" onChange={(e) => handleFileChange(e, 'logo')} required />
+          <Label htmlFor="storeLogo">Store Logo</Label>
+          <Input id="storeLogo" type="file" accept="image/*" onChange={(e) => handleFileChange(e, 'logo')} />
+          {sellerSettings.storeLogo && <img src={sellerSettings.storeLogo} alt="Store Logo" className="mt-2 max-w-xs" />}
         </div>
         <div>
-          <Label htmlFor="storeBanner">Store Banner *</Label>
-          <Input id="storeBanner" type="file" accept="image/*" onChange={(e) => handleFileChange(e, 'banner')} required />
+          <Label htmlFor="storeBanner">Store Banner</Label>
+          <Input id="storeBanner" type="file" accept="image/*" onChange={(e) => handleFileChange(e, 'banner')} />
+          {sellerSettings.storeBanner && <img src={sellerSettings.storeBanner} alt="Store Banner" className="mt-2 max-w-xs" />}
         </div>
         <div>
           <Label htmlFor="shippingPolicy">Shipping Policy *</Label>
@@ -450,7 +496,9 @@ function SellerSettingsTab() {
           <Label htmlFor="returnPolicy">Return Policy *</Label>
           <Textarea id="returnPolicy" name="returnPolicy" value={sellerSettings.returnPolicy} onChange={handleChange} placeholder="Enter your return policy..." required />
         </div>
-        <Button type="submit">Save Store Settings</Button>
+        <Button type="submit" disabled={isSubmitting}>
+          {isSubmitting ? "Saving..." : "Save Store Settings"}
+        </Button>
       </form>
     </ScrollArea>
   )

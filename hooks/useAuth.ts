@@ -102,5 +102,15 @@ export const useAuth = () => {
     }
   };
 
-  return { user, signUp, logIn, logOut, error, getUserData, updateProfilePicture, updateUserData };
+  const updateSellerSettings = async (userId: string, sellerData: any) => {
+    try {
+      const userDocRef = doc(firestore, 'users', userId);
+      await updateDoc(userDocRef, { sellerSettings: sellerData });
+    } catch (error) {
+      console.error('Error updating seller settings:', error);
+      throw error;
+    }
+  };
+
+  return { user, signUp, logIn, logOut, error, getUserData, updateProfilePicture, updateUserData, updateSellerSettings };
 };
