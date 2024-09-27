@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
-import { FaUser, FaPlus } from 'react-icons/fa';
+import { FaUser, FaPlus, FaComments, FaBell } from 'react-icons/fa';
 import { useAuth } from '@/hooks/useAuth';
 
 interface HamburgerMenuProps {
@@ -11,13 +11,15 @@ interface HamburgerMenuProps {
 const HamburgerMenu: React.FC<HamburgerMenuProps> = ({ isOpen, onClose }) => {
   const { user, logOut } = useAuth();
 
-  if (!isOpen) return null;
-
   return (
-    <div className="fixed inset-0 bg-gray-600 bg-opacity-50 z-50 flex justify-end">
-      <div className="w-64 bg-white h-full shadow-lg p-4 flex flex-col">
+    <div
+      className={`fixed top-0 right-0 h-full w-64 bg-white shadow-lg transform ${
+        isOpen ? 'translate-x-0' : 'translate-x-full'
+      } transition-transform duration-300 ease-in-out z-50`}
+    >
+      <div className="p-4 flex flex-col h-full">
         <button onClick={onClose} className="self-end text-2xl">&times;</button>
-        <nav className="mt-8">
+        <nav className="mt-8 flex-grow">
           <ul className="space-y-4">
             <li>
               <Link href="/" className="text-blue-600 hover:text-blue-800">
@@ -36,6 +38,18 @@ const HamburgerMenu: React.FC<HamburgerMenuProps> = ({ isOpen, onClose }) => {
                   <Link href="/listing" className="flex items-center text-blue-600 hover:text-blue-800">
                     <FaPlus className="mr-2" />
                     Create Listing
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/chat" className="flex items-center text-blue-600 hover:text-blue-800">
+                    <FaComments className="mr-2" />
+                    Chat
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/notifications" className="flex items-center text-blue-600 hover:text-blue-800">
+                    <FaBell className="mr-2" />
+                    Notifications
                   </Link>
                 </li>
                 <li>
