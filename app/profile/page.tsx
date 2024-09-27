@@ -27,7 +27,7 @@ export default function ProfilePage() {
   const [profileVerified, setProfileVerified] = useState(false)
   const [profilePicture, setProfilePicture] = useState("/placeholder-avatar.jpg")
   const { toast } = useToast();
-  const { user, getUserData, logOut } = useAuth();
+  const { user, getUserData, logOut, updateProfilePicture } = useAuth();
   const [userData, setUserData] = useState<any>(null);
 
   useEffect(() => {
@@ -36,38 +36,53 @@ export default function ProfilePage() {
         const data = await getUserData(user.uid);
         if (data) {
           setUserData(data);
+          if (data.profilePicture) {
+            setProfilePicture(data.profilePicture);
+          }
         }
       }
     };
     fetchUserData();
   }, [user, getUserData]);
 
-  const handleChangePhoto = useCallback(() => {
+  const handleChangePhoto = useCallback(async () => {
+    if (!user) {
+      toast({
+        title: "Error",
+        description: "You must be logged in to change your profile picture.",
+        variant: "destructive"
+      });
+      return;
+    }
+
     const input = document.createElement('input');
     input.type = 'file';
     input.accept = 'image/*';
-    input.onchange = (e: Event) => {
+    input.onchange = async (e: Event) => {
       const target = e.target as HTMLInputElement;
       if (target && target.files) {
         const file = target.files[0];
         if (file) {
-          const reader = new FileReader();
-          reader.onload = (e) => {
-            const result = (e.target as FileReader).result;
-            if (typeof result === 'string') {
-              setProfilePicture(result);
-              toast({
-                title: "Profile picture updated",
-                description: "Your new profile picture has been set successfully.",
-              })
-            }
-          };
-          reader.readAsDataURL(file);
+          try {
+            const newProfilePictureUrl = await updateProfilePicture(user.uid, file);
+            setProfilePicture(newProfilePictureUrl);
+            toast({
+              title: "Profile picture updated",
+              description: "Your new profile picture has been set successfully.",
+            });
+          } catch (error) {
+            console.error('Error updating profile picture:', error);
+            toast({
+              title: "Error",
+              description: "Failed to update profile picture. Please try again.",
+              variant: "destructive"
+            });
+          }
         }
       }
     };
     input.click();
-  }, [toast]);
+  }, [toast, user, updateProfilePicture]);
 
   const handleSupportRequest = useCallback(async () => {
     await mockApiCall({ success: true });

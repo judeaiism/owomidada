@@ -3,6 +3,9 @@ import { auth, firestore } from '@/lib/firebase';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, User } from 'firebase/auth';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
 import { useRouter } from 'next/navigation';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { updateDoc } from 'firebase/firestore';
+import { storage } from '@/lib/firebase';
 
 export const useAuth = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -72,5 +75,22 @@ export const useAuth = () => {
     }
   };
 
-  return { user, signUp, logIn, logOut, error, getUserData };
+  const updateProfilePicture = async (userId: string, imageFile: File) => {
+    try {
+      const storageRef = ref(storage, `profile_pictures/${userId}`);
+      const uploadTask = await uploadBytes(storageRef, imageFile);
+      const downloadURL = await getDownloadURL(uploadTask.ref);
+
+      await updateDoc(doc(firestore, 'users', userId), {
+        profilePicture: downloadURL
+      });
+
+      return downloadURL;
+    } catch (error) {
+      console.error('Error updating profile picture:', error);
+      throw error;
+    }
+  };
+
+  return { user, signUp, logIn, logOut, error, getUserData, updateProfilePicture };
 };
