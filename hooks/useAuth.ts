@@ -43,6 +43,7 @@ export const useAuth = () => {
     } catch (error) {
       setError((error as Error).message);
       console.error('Error logging in:', error);
+      throw error; // Re-throw the error so it can be caught in the component
     }
   };
 
