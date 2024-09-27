@@ -13,11 +13,12 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { AlertCircle, Camera, HelpCircle, MessageSquare, LogOut } from 'lucide-react'
+import { AlertCircle, Camera, HelpCircle, MessageSquare, LogOut, Home } from 'lucide-react'
 import { useToast } from "@/hooks/use-toast"
 import Link from 'next/link'
 import { storage } from '@/lib/firebase';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { useRouter } from 'next/navigation';
 
 // Mock API calls
 const mockApiCall = (data: any, delay = 1000) => new Promise((resolve) => setTimeout(() => resolve(data), delay));
@@ -44,6 +45,7 @@ export default function ProfilePage() {
   const { toast } = useToast();
   const { user, getUserData, logOut, updateProfilePicture } = useAuth();
   const [userData, setUserData] = useState<UserData | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -128,12 +130,20 @@ export default function ProfilePage() {
     }
   };
 
+  const handleGoHome = () => {
+    router.push('/');
+  };
+
   return (
     <ProtectedRoute>
       <div className="container mx-auto p-6">
         <header className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold">Welcome, {userData?.firstName || 'User'}</h1>
           <div className="flex items-center space-x-4">
+            <Button variant="outline" onClick={handleGoHome}>
+              <Home className="mr-2 h-4 w-4" />
+              Go to Homepage
+            </Button>
             <Button variant="outline" onClick={handleSupportRequest}>
               <HelpCircle className="mr-2 h-4 w-4" />
               Help & Support

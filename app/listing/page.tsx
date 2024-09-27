@@ -28,6 +28,8 @@ import { ImagePlus, Loader2, X } from "lucide-react"
 import { Checkbox } from "@/components/ui/checkbox"
 import useProductStore from '@/stores/productStore';
 import { useRouter } from 'next/navigation';
+import { RainbowButton } from "@/components/ui/rainbow-button";
+import Link from 'next/link';
 
 export default function CreateListing() {
   const [images, setImages] = useState<string[]>([])
@@ -111,6 +113,20 @@ export default function CreateListing() {
 
   return (
     <div className="container mx-auto p-4 max-w-2xl">
+      {/* Navigation Buttons */}
+      <div className="flex justify-between mb-6">
+        <Link href="/">
+          <RainbowButton>
+            Home
+          </RainbowButton>
+        </Link>
+        <Link href="/profile">
+          <RainbowButton>
+            Profile
+          </RainbowButton>
+        </Link>
+      </div>
+
       <h1 className="text-2xl font-bold mb-6">Create a New Listing</h1>
       
       {/* Image Upload */}
