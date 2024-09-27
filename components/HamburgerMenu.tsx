@@ -21,11 +21,6 @@ const HamburgerMenu: React.FC<HamburgerMenuProps> = ({ isOpen, onClose }) => {
         <button onClick={onClose} className="self-end text-2xl">&times;</button>
         <nav className="mt-8 flex-grow">
           <ul className="space-y-4">
-            <li>
-              <Link href="/" className="text-blue-600 hover:text-blue-800">
-                Home
-              </Link>
-            </li>
             {user ? (
               <>
                 <li>
