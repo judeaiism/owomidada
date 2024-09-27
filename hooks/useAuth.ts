@@ -55,5 +55,21 @@ export const useAuth = () => {
     }
   };
 
-  return { user, signUp, logIn, logOut, error };
+  const getUserData = async (userId: string) => {
+    try {
+      const userDocRef = doc(firestore, 'users', userId);
+      const userDocSnap = await getDoc(userDocRef);
+      if (userDocSnap.exists()) {
+        return userDocSnap.data();
+      } else {
+        console.log("No such document!");
+        return null;
+      }
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+      return null;
+    }
+  };
+
+  return { user, signUp, logIn, logOut, error, getUserData };
 };

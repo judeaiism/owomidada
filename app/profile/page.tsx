@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useEffect, useCallback } from 'react'
+import { useAuth } from "@/hooks/useAuth"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -11,7 +12,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { AlertCircle, Camera, HelpCircle, MessageSquare } from 'lucide-react'
+import { AlertCircle, Camera, HelpCircle, MessageSquare, LogOut } from 'lucide-react'
 import { useToast } from "@/hooks/use-toast"
 import Link from 'next/link'
 
@@ -26,6 +27,20 @@ export default function ProfilePage() {
   const [profileVerified, setProfileVerified] = useState(false)
   const [profilePicture, setProfilePicture] = useState("/placeholder-avatar.jpg")
   const { toast } = useToast();
+  const { user, getUserData, logOut } = useAuth();
+  const [userData, setUserData] = useState<any>(null);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (user) {
+        const data = await getUserData(user.uid);
+        if (data) {
+          setUserData(data);
+        }
+      }
+    };
+    fetchUserData();
+  }, [user, getUserData]);
 
   const handleChangePhoto = useCallback(() => {
     const input = document.createElement('input');
@@ -62,6 +77,23 @@ export default function ProfilePage() {
     })
   }, [toast]);
 
+  const handleSignOut = async () => {
+    try {
+      await logOut();
+      toast({
+        title: "Signed out successfully",
+        description: "You have been signed out of your account.",
+      });
+    } catch (error) {
+      console.error('Error signing out:', error);
+      toast({
+        title: "Sign out failed",
+        description: "An error occurred while signing out. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <div className="container mx-auto p-6">
       <header className="flex justify-between items-center mb-6">
@@ -84,6 +116,10 @@ export default function ProfilePage() {
               Verified Profile
             </Badge>
           )}
+          <Button variant="destructive" onClick={handleSignOut}>
+            <LogOut className="mr-2 h-4 w-4" />
+            Sign Out
+          </Button>
         </div>
       </header>
 
@@ -133,6 +169,7 @@ export default function ProfilePage() {
 
 function PersonalInfoTab() {
   const { toast } = useToast();
+  const { user, getUserData } = useAuth();
   const [personalInfo, setPersonalInfo] = useState({
     firstName: "",
     lastName: "",
@@ -143,6 +180,27 @@ function PersonalInfoTab() {
     gender: "",
     bio: ""
   });
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (user) {
+        const data = await getUserData(user.uid);
+        if (data) {
+          setPersonalInfo({
+            firstName: data.firstName || "",
+            lastName: data.lastName || "",
+            displayName: data.displayName || "",
+            email: data.email || "",
+            phone: data.phone || "",
+            dob: data.dob || "",
+            gender: data.gender || "",
+            bio: data.bio || ""
+          });
+        }
+      }
+    };
+    fetchUserData();
+  }, [user, getUserData]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
