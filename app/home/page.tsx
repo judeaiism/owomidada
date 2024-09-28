@@ -1,14 +1,14 @@
 "use client"
 
-import Header from '../components/Header';
-import SearchBar from '../components/SearchBar';
-import ProductList from '../components/ProductList';
-import HamburgerMenu from '../components/HamburgerMenu';
-import CategoryList from '../components/CategoryList';
-import Footer from '../components/Footer';
+import Header from '../../components/Header';
+import SearchBar from '../../components/SearchBar';
+import ProductList from '../../components/ProductList';
+import HamburgerMenu from '../../components/HamburgerMenu';
+import CategoryList from '../../components/CategoryList';
+import Footer from '../../components/Footer';
 import { useState, ChangeEvent, useEffect } from 'react';
 import useProductStore from '@/stores/productStore';
-import PulsatingButton from '../components/magicui/pulsating-button';
+import PulsatingButton from '../../components/magicui/pulsating-button';
 import Image from 'next/image';
 import { useAuth } from '@/hooks/useAuth';
 
