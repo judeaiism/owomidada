@@ -182,3 +182,81 @@ json
 - Implement server-side rendering for product listings
 - Optimize images and implement lazy loading
 - Add unit and integration tests
+
+project_root/
+├── .breakpoints
+├── .config/
+│   └── create-next-app-nodejs/
+│       └── config.json
+├── .cursorrules
+├── .env.local
+├── .eslintrc.json
+├── .gitignore
+├── .next/
+├── .replit
+├── .upm/
+│   └── store.json
+├── app/
+│   ├── _app.tsx
+│   ├── categories/
+│   │   └── [categoryName]/
+│   │       └── page.tsx
+│   ├── create-listing.tsx
+│   ├── layout.tsx
+│   ├── listing/
+│   │   └── page.tsx
+│   ├── page.tsx
+│   ├── profile/
+│   │   └── page.tsx
+│   └── types.ts
+├── components/
+│   ├── CategoryList.tsx
+│   ├── Footer.tsx
+│   ├── HamburgerMenu.tsx
+│   ├── Header.tsx
+│   ├── ProductList.tsx
+│   ├── SearchBar.tsx
+│   └── ui/
+│       ├── accordion.tsx
+│       ├── breadcrumb.tsx
+│       ├── calendar.tsx
+│       ├── card.tsx
+│       ├── chart.tsx
+│       ├── collapsible.tsx
+│       ├── command.tsx
+│       ├── context-menu.tsx
+│       ├── drawer.tsx
+│       ├── menubar.tsx
+│       ├── navigation-menu.tsx
+│       ├── rainbow-button.tsx
+│       ├── resizable.tsx
+│       ├── sheet.tsx
+│       ├── table.tsx
+│       ├── tabs.tsx
+│       └── toaster.tsx
+├── components.json
+├── firebaseConfig.ts
+├── hooks/
+│   └── use-toast.ts
+├── lib/
+│   ├── firebase.ts
+│   └── utils.ts
+├── next-env.d.ts
+├── next.config.js
+├── node_modules/
+├── owomida.md
+├── package.json
+├── postcss.config.js
+├── public/
+│   ├── placeholder1.jpg
+│   ├── placeholder2.jpg
+│   ├── placeholder3.jpg
+│   └── replit.svg
+├── README.md
+├── stores/
+│   └── productStore.ts
+├── styles/
+│   ├── globals.css
+│   └── Home.module.css
+├── tailwind.config.js
+└── tsconfig.json

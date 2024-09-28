@@ -24,7 +24,7 @@ import {
   DialogTrigger,
   DialogDescription,
 } from "@/components/ui/dialog"
-import { ImagePlus, Loader2, X } from "lucide-react"
+import { ImagePlus, Loader2, X, MessageCircle } from "lucide-react"
 import { Checkbox } from "@/components/ui/checkbox"
 import useProductStore from '@/stores/productStore';
 import { useRouter } from 'next/navigation';
@@ -115,11 +115,19 @@ export default function CreateListing() {
     <div className="container mx-auto p-4 max-w-2xl">
       {/* Navigation Buttons */}
       <div className="flex justify-between mb-6">
-        <Link href="/">
-          <RainbowButton>
-            Home
-          </RainbowButton>
-        </Link>
+        <div className="flex space-x-2">
+          <Link href="/">
+            <RainbowButton>
+              Home
+            </RainbowButton>
+          </Link>
+          <Link href="/chat">
+            <RainbowButton>
+              <MessageCircle className="w-4 h-4 mr-2" />
+              Chat
+            </RainbowButton>
+          </Link>
+        </div>
         <Link href="/profile">
           <RainbowButton>
             Profile
