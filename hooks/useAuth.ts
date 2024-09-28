@@ -89,11 +89,13 @@ export const useAuth = () => {
           id: userDoc.id,
           firstName: userData.firstName,
           lastName: userData.lastName,
+          displayName: userData.displayName, // Make sure to include this
           email: userData.email,
           profilePicture: userData.profilePicture,
-          dob: userData.dob,
-          gender: userData.gender,
-          bio: userData.bio,
+          dob: userData.dob || '',
+          gender: userData.gender || '',
+          bio: userData.bio || '',
+          phone: userData.phone || '',
           sellerSettings: userData.sellerSettings || {},
         } as UserData;
       }

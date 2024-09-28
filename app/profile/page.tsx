@@ -196,7 +196,7 @@ export default function ProfilePage() {
               <AvatarFallback>{userData?.firstName?.[0]}{userData?.lastName?.[0]}</AvatarFallback>
             </Avatar>
             <div>
-              <h1 className="text-2xl font-bold">Welcome, {userData?.firstName || 'User'}</h1>
+              <h1 className="text-2xl font-bold">Welcome, {userData?.displayName || userData?.firstName || 'User'}</h1>
               {profileVerified && <Badge variant="secondary">Verified Profile</Badge>}
             </div>
           </div>

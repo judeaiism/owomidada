@@ -16,6 +16,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ isLogin }) => {
   const [password, setPassword] = useState('');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
+  const [displayName, setDisplayName] = useState(''); // Add this line
   const { signUp, logIn, error } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -23,7 +24,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ isLogin }) => {
     if (isLogin) {
       await logIn(email, password);
     } else {
-      await signUp(email, password, firstName, lastName, ''); // Passing an empty string for the fifth argument
+      await signUp(email, password, firstName, lastName, displayName); // Use displayName here
     }
   };
 
@@ -53,6 +54,16 @@ const AuthForm: React.FC<AuthFormProps> = ({ isLogin }) => {
               type="text"
               value={lastName}
               onChange={(e) => setLastName(e.target.value)}
+              required
+            />
+          </div>
+          <div>
+            <Label htmlFor="displayName">Display Name</Label>
+            <Input
+              id="displayName"
+              type="text"
+              value={displayName}
+              onChange={(e) => setDisplayName(e.target.value)}
               required
             />
           </div>
