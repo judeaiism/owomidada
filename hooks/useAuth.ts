@@ -84,7 +84,18 @@ export const useAuth = () => {
     try {
       const userDoc = await getDoc(doc(firestore, 'users', userId));
       if (userDoc.exists()) {
-        return { id: userDoc.id, ...userDoc.data() } as UserData;
+        const userData = userDoc.data();
+        return {
+          id: userDoc.id,
+          firstName: userData.firstName,
+          lastName: userData.lastName,
+          email: userData.email,
+          profilePicture: userData.profilePicture,
+          dob: userData.dob,
+          gender: userData.gender,
+          bio: userData.bio,
+          sellerSettings: userData.sellerSettings || {},
+        } as UserData;
       }
       return null;
     } catch (error) {

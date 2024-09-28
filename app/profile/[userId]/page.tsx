@@ -17,7 +17,16 @@ interface UserProfileData {
   email: string;
   profilePicture?: string;
   bio?: string;
-  // Add any other fields you want to display
+  dob?: string;
+  gender?: string;
+  sellerSettings?: {
+    storeName: string;
+    storeDescription: string;
+    storeLogo: string;
+    storeBanner: string;
+    shippingPolicy: string;
+    returnPolicy: string;
+  };
 }
 
 export default function UserProfilePage() {
@@ -65,6 +74,8 @@ export default function UserProfilePage() {
     return <div>User profile not found.</div>
   }
 
+  const birthYear = profileData.dob ? new Date(profileData.dob).getFullYear() : null
+
   return (
     <div className="container mx-auto p-6">
       <Card>
@@ -87,6 +98,50 @@ export default function UserProfilePage() {
               <h3 className="font-semibold">Bio</h3>
               <p>{profileData.bio}</p>
             </div>
+          )}
+          {birthYear && (
+            <div>
+              <h3 className="font-semibold">Birth Year</h3>
+              <p>{birthYear}</p>
+            </div>
+          )}
+          {profileData.gender && (
+            <div>
+              <h3 className="font-semibold">Gender</h3>
+              <p>{profileData.gender}</p>
+            </div>
+          )}
+          {profileData.sellerSettings && (
+            <>
+              <div>
+                <h3 className="font-semibold">Store Name</h3>
+                <p>{profileData.sellerSettings.storeName}</p>
+              </div>
+              <div>
+                <h3 className="font-semibold">Store Description</h3>
+                <p>{profileData.sellerSettings.storeDescription}</p>
+              </div>
+              {profileData.sellerSettings.storeLogo && (
+                <div>
+                  <h3 className="font-semibold">Store Logo</h3>
+                  <img src={profileData.sellerSettings.storeLogo} alt="Store Logo" className="max-w-xs" />
+                </div>
+              )}
+              {profileData.sellerSettings.storeBanner && (
+                <div>
+                  <h3 className="font-semibold">Store Banner</h3>
+                  <img src={profileData.sellerSettings.storeBanner} alt="Store Banner" className="max-w-full" />
+                </div>
+              )}
+              <div>
+                <h3 className="font-semibold">Shipping Policy</h3>
+                <p>{profileData.sellerSettings.shippingPolicy}</p>
+              </div>
+              <div>
+                <h3 className="font-semibold">Return Policy</h3>
+                <p>{profileData.sellerSettings.returnPolicy}</p>
+              </div>
+            </>
           )}
           <Button onClick={handleMessageUser}>
             <MessageSquare className="mr-2 h-4 w-4" />
