@@ -131,6 +131,10 @@ export default function ProfilePage() {
     router.push('/');
   };
 
+  const handleGoToChat = () => {
+    router.push('/chat');
+  };
+
   const handleHideProduct = async (productId: string) => {
     try {
       await hideProduct(productId);
@@ -184,69 +188,61 @@ export default function ProfilePage() {
 
   return (
     <ProtectedRoute>
-      <div className="container mx-auto p-6">
-        <header className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold">Welcome, {userData?.firstName || 'User'}</h1>
+      <div className="container mx-auto p-4 max-w-4xl">
+        <header className="flex flex-col sm:flex-row justify-between items-center mb-6 space-y-4 sm:space-y-0">
           <div className="flex items-center space-x-4">
-            <Button variant="outline" onClick={handleGoHome}>
+            <Avatar className="w-16 h-16">
+              <AvatarImage src={profilePicture} alt="Profile Picture" />
+              <AvatarFallback>{userData?.firstName?.[0]}{userData?.lastName?.[0]}</AvatarFallback>
+            </Avatar>
+            <div>
+              <h1 className="text-2xl font-bold">Welcome, {userData?.firstName || 'User'}</h1>
+              {profileVerified && <Badge variant="secondary">Verified Profile</Badge>}
+            </div>
+          </div>
+          <div className="flex flex-wrap justify-center sm:justify-end items-center gap-2">
+            <Button variant="outline" size="sm" onClick={handleGoHome}>
               <Home className="mr-2 h-4 w-4" />
-              Go to Homepage
+              Home
             </Button>
-            <Button variant="outline" onClick={handleSupportRequest}>
+            <Button variant="outline" size="sm" onClick={handleGoToChat}>
+              <MessageSquare className="mr-2 h-4 w-4" />
+              Chat
+            </Button>
+            <Button variant="outline" size="sm" onClick={handleSupportRequest}>
               <HelpCircle className="mr-2 h-4 w-4" />
-              Help & Support
+              Support
             </Button>
             {!profileVerified && (
               <Link href={VERIFICATION_URL} passHref>
-                <Button>
+                <Button size="sm">
                   <AlertCircle className="mr-2 h-4 w-4" />
-                  Verify Profile
+                  Verify
                 </Button>
               </Link>
             )}
-            {profileVerified && (
-              <Badge variant="secondary">
-                Verified Profile
-              </Badge>
-            )}
-            <Button variant="destructive" onClick={handleSignOut}>
+            <Button variant="destructive" size="sm" onClick={handleSignOut}>
               <LogOut className="mr-2 h-4 w-4" />
               Sign Out
             </Button>
           </div>
         </header>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <Card className="col-span-1">
-            <CardHeader>
-              <CardTitle>Profile Picture</CardTitle>
-            </CardHeader>
-            <CardContent className="flex flex-col items-center">
-              <Avatar className="w-32 h-32">
-                <AvatarImage src={profilePicture} alt="Profile Picture" />
-                <AvatarFallback>{userData?.firstName?.[0]}{userData?.lastName?.[0]}</AvatarFallback>
-              </Avatar>
-              <Button variant="outline" className="mt-4" onClick={handleChangePhoto}>
-                <Camera className="mr-2 h-4 w-4" />
-                Change Photo
-              </Button>
-            </CardContent>
-          </Card>
-
-          <Card className="col-span-1 md:col-span-2">
-            <Tabs value={activeTab} onValueChange={setActiveTab}>
-              <TabsList className="grid w-full grid-cols-5">
-                <TabsTrigger value="personal-info">Personal Info</TabsTrigger>
-                <TabsTrigger value="seller-settings">Seller Settings</TabsTrigger>
+        <Card>
+          <CardHeader>
+            <CardTitle>Profile Management</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Tabs defaultValue="personal-info" className="w-full">
+              <TabsList className="grid grid-cols-2 sm:grid-cols-5 w-full">
+                <TabsTrigger value="personal-info">Personal</TabsTrigger>
+                <TabsTrigger value="seller-settings">Seller</TabsTrigger>
                 <TabsTrigger value="security">Security</TabsTrigger>
                 <TabsTrigger value="preferences">Preferences</TabsTrigger>
-                <TabsTrigger value="listings">My Listings</TabsTrigger>
+                <TabsTrigger value="listings">Listings</TabsTrigger>
               </TabsList>
               <TabsContent value="personal-info">
-                <PersonalInfoTab 
-                  userData={userData || {} as UserData} 
-                  setUserData={setUserData} 
-                />
+                <PersonalInfoTab userData={userData || {} as UserData} setUserData={setUserData} />
               </TabsContent>
               <TabsContent value="seller-settings">
                 <SellerSettingsTab />
@@ -258,36 +254,22 @@ export default function ProfilePage() {
                 <PreferencesTab />
               </TabsContent>
               <TabsContent value="listings">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>My Listings</CardTitle>
-                    <CardDescription>View and manage your product listings</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <UserListingsTable 
-                      listings={userProducts} 
-                      onHide={handleHideProduct}
-                      onUnhide={handleUnhideProduct}
-                      onDelete={handleDeleteProduct}
-                    />
-                  </CardContent>
-                </Card>
+                <UserListingsTable 
+                  listings={userProducts} 
+                  onHide={handleHideProduct}
+                  onUnhide={handleUnhideProduct}
+                  onDelete={handleDeleteProduct}
+                />
               </TabsContent>
             </Tabs>
-          </Card>
-        </div>
+          </CardContent>
+        </Card>
       </div>
     </ProtectedRoute>
   )
 }
 
-function PersonalInfoTab({ 
-  userData, 
-  setUserData 
-}: { 
-  userData: UserData, 
-  setUserData: React.Dispatch<React.SetStateAction<UserData | null>> 
-}) {
+function PersonalInfoTab({ userData, setUserData }: { userData: UserData, setUserData: React.Dispatch<React.SetStateAction<UserData | null>> }) {
   const { toast } = useToast();
   const { user, updateUserData } = useAuth();
   const [personalInfo, setPersonalInfo] = useState({
@@ -365,17 +347,15 @@ function PersonalInfoTab({
   };
 
   return (
-    <ScrollArea className="h-[400px] w-full rounded-md border p-4">
-      <form className="space-y-4" onSubmit={handleSubmit}>
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <Label htmlFor="firstName">First Name *</Label>
-            <Input id="firstName" name="firstName" value={personalInfo.firstName} onChange={handleChange} placeholder="John" required />
-          </div>
-          <div>
-            <Label htmlFor="lastName">Last Name *</Label>
-            <Input id="lastName" name="lastName" value={personalInfo.lastName} onChange={handleChange} placeholder="Doe" required />
-          </div>
+    <form className="space-y-4" onSubmit={handleSubmit}>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <Label htmlFor="firstName">First Name *</Label>
+          <Input id="firstName" name="firstName" value={personalInfo.firstName} onChange={handleChange} placeholder="John" required />
+        </div>
+        <div>
+          <Label htmlFor="lastName">Last Name *</Label>
+          <Input id="lastName" name="lastName" value={personalInfo.lastName} onChange={handleChange} placeholder="Doe" required />
         </div>
         <div>
           <Label htmlFor="displayName">Display Name *</Label>
@@ -393,21 +373,22 @@ function PersonalInfoTab({
           <Label htmlFor="dob">Date of Birth *</Label>
           <Input id="dob" name="dob" type="date" value={personalInfo.dob} onChange={handleChange} required />
         </div>
-        <div>
-          <Label htmlFor="gender">Gender *</Label>
-          <select id="gender" name="gender" value={personalInfo.gender} onChange={handleChange} className="w-full p-2 border rounded" required>
-            <option value="">Select Gender</option>
-            <option value="male">Male</option>
-            <option value="female">Female</option>
-          </select>
-        </div>
-        <div>
-          <Label htmlFor="bio">Bio *</Label>
-          <Textarea id="bio" name="bio" value={personalInfo.bio} onChange={handleChange} placeholder="Tell us about yourself..." required />
-        </div>
-        <Button type="submit">Save Changes</Button>
-      </form>
-    </ScrollArea>
+      </div>
+      <div>
+        <Label htmlFor="gender">Gender *</Label>
+        <select id="gender" name="gender" value={personalInfo.gender} onChange={handleChange} className="w-full p-2 border rounded" required>
+          <option value="">Select Gender</option>
+          <option value="male">Male</option>
+          <option value="female">Female</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+      <div>
+        <Label htmlFor="bio">Bio *</Label>
+        <Textarea id="bio" name="bio" value={personalInfo.bio} onChange={handleChange} placeholder="Tell us about yourself..." required />
+      </div>
+      <Button type="submit">Save Changes</Button>
+    </form>
   )
 }
 
