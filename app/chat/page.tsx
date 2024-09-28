@@ -2,11 +2,17 @@
 
 import * as React from "react"
 import Link from "next/link"
-import { Menu, MessageSquare, Home, List, User, Search, X } from "lucide-react"
+import { Menu, MessageSquare, Home, List, User, Search, X, MoreVertical, AlertTriangle, Grid } from "lucide-react"
 import { useRouter } from 'next/navigation'
 import { auth, database, firestore } from "@/lib/firebase"
 import { onValue, ref, push, set } from 'firebase/database'
 import { collection, query as firebaseQuery, where, getDocs } from 'firebase/firestore'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -246,13 +252,36 @@ export default function ChatPage() {
                   </p>
                 </div>
               </div>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setIsChatOpen(false)}
-              >
-                <X className="h-6 w-6" />
-              </Button>
+              <div className="flex items-center space-x-2">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="icon">
+                      <MoreVertical className="h-5 w-5" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-56">
+                    <DropdownMenuItem onClick={() => router.push(`/profile/${selectedUser.id}`)}>
+                      <User className="mr-2 h-4 w-4" />
+                      <span>View profile</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => {/* Implement report functionality */}}>
+                      <AlertTriangle className="mr-2 h-4 w-4" />
+                      <span>Report profile</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => router.push(`/user-items/${selectedUser.id}`)}>
+                      <Grid className="mr-2 h-4 w-4" />
+                      <span>View more items</span>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setIsChatOpen(false)}
+                >
+                  <X className="h-6 w-6" />
+                </Button>
+              </div>
             </div>
             <div className="flex-1 overflow-y-auto p-4">
               <div className="space-y-4">
