@@ -117,7 +117,8 @@ export default function CreateListing() {
         condition: formData.condition,
         location: formData.location,
         listingType: formData.listingType,
-        shippingOptions: shippingOptions,  // Add this line
+        shippingOptions: shippingOptions,
+        userId: user.uid,  // Ensure this line is included
       };
 
       await addProduct(newProduct);

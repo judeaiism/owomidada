@@ -37,7 +37,7 @@ const useProductStore = create<ProductsState>((set) => ({
 
     const newProduct = {
       ...product,
-      userId: user.uid,
+      userId: user.uid,  // Add this line
       createdAt: new Date(),
     };
 

@@ -1,5 +1,5 @@
-import React from 'react'
-import { useState } from 'react'
+import React, { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { Card, CardContent, CardFooter } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
@@ -16,6 +16,7 @@ interface Product {
   condition: string
   location: string
   listingType: string
+  userId: string  // Add this line
 }
 
 interface ProductCardProps {
@@ -24,6 +25,12 @@ interface ProductCardProps {
 
 function ViewDetailsModal({ product }: ProductCardProps) {
   const [isOpen, setIsOpen] = useState(false)
+  const router = useRouter()
+
+  const handleSeeSellerDetails = () => {
+    router.push(`/profile/${product.userId}`)
+    setIsOpen(false)
+  }
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -62,7 +69,7 @@ function ViewDetailsModal({ product }: ProductCardProps) {
             <UserPlus className="mr-2 h-4 w-4" />
             Follow seller
           </Button>
-          <Button variant="outline" className="justify-start">
+          <Button variant="outline" className="justify-start" onClick={handleSeeSellerDetails}>
             <User className="mr-2 h-4 w-4" />
             See seller details
           </Button>
