@@ -109,10 +109,35 @@ export default function ChatPage() {
         text: message,
         timestamp: Date.now(),
       }
-      const chatRef = ref(database, `messages/${currentUser!.uid}/${selectedUser.id}`)
-      push(chatRef, messageData)
-      const recipientChatRef = ref(database, `messages/${selectedUser.id}/${currentUser!.uid}`)
-      push(recipientChatRef, messageData)
+
+      // Send message to recipient's messages
+      const recipientMessagesRef = ref(database, `messages/${selectedUser.id}/${currentUser!.uid}`)
+      push(recipientMessagesRef, messageData)
+
+      // Update recipient's chat list
+      const recipientChatRef = ref(database, `chats/${selectedUser.id}/${currentUser!.uid}`)
+      set(recipientChatRef, {
+        userId: currentUser!.uid,
+        name: currentUserData?.name ?? `${currentUserData?.firstName} ${currentUserData?.lastName}`,
+        avatar: currentUserData?.avatar ?? currentUserData?.profilePicture ?? "/images/placeholder-avatar.jpg",
+        lastMessage: message,
+        timestamp: Date.now(),
+      })
+
+      // Send message to current user's messages
+      const currentUserMessagesRef = ref(database, `messages/${currentUser!.uid}/${selectedUser.id}`)
+      push(currentUserMessagesRef, messageData)
+
+      // Update current user's chat list
+      const currentUserChatRef = ref(database, `chats/${currentUser!.uid}/${selectedUser.id}`)
+      set(currentUserChatRef, {
+        userId: selectedUser.id,
+        name: selectedUser.name ?? `${selectedUser.firstName} ${selectedUser.lastName}`,
+        avatar: selectedUser.avatar ?? selectedUser.profilePicture ?? "/images/placeholder-avatar.jpg",
+        lastMessage: message,
+        timestamp: Date.now(),
+      })
+
       setMessage('')
     }
   }
