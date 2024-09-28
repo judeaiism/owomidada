@@ -20,6 +20,7 @@ import { storage } from '@/lib/firebase';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { useRouter } from 'next/navigation';
 import useProductStore from '@/stores/productStore';
+import UserListingsTable from '@/components/UserListingsTable';
 
 // Mock API calls
 const mockApiCall = (data: any, delay = 1000) => new Promise((resolve) => setTimeout(() => resolve(data), delay));
@@ -183,11 +184,12 @@ export default function ProfilePage() {
 
           <Card className="col-span-1 md:col-span-2">
             <Tabs value={activeTab} onValueChange={setActiveTab}>
-              <TabsList className="grid w-full grid-cols-4">
+              <TabsList className="grid w-full grid-cols-5">
                 <TabsTrigger value="personal-info">Personal Info</TabsTrigger>
                 <TabsTrigger value="seller-settings">Seller Settings</TabsTrigger>
                 <TabsTrigger value="security">Security</TabsTrigger>
                 <TabsTrigger value="preferences">Preferences</TabsTrigger>
+                <TabsTrigger value="listings">My Listings</TabsTrigger>
               </TabsList>
               <TabsContent value="personal-info">
                 <PersonalInfoTab 
@@ -203,6 +205,17 @@ export default function ProfilePage() {
               </TabsContent>
               <TabsContent value="preferences">
                 <PreferencesTab />
+              </TabsContent>
+              <TabsContent value="listings">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>My Listings</CardTitle>
+                    <CardDescription>View and manage your product listings</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <UserListingsTable listings={userProducts} />
+                  </CardContent>
+                </Card>
               </TabsContent>
             </Tabs>
           </Card>
