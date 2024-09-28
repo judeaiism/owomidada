@@ -7,6 +7,27 @@ import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { updateDoc } from 'firebase/firestore';
 import { storage } from '@/lib/firebase';
 
+export interface UserData {
+  id: string;
+  firstName: string;
+  lastName: string;
+  displayName: string;
+  email: string;
+  phone: string;
+  dob: string;
+  gender: string;
+  bio: string;
+  profilePicture?: string;
+  sellerSettings?: {
+    storeName: string;
+    storeDescription: string;
+    shippingPolicy: string;
+    returnPolicy: string;
+    storeLogo: string;
+    storeBanner: string;
+  };
+}
+
 export const useAuth = () => {
   const [user, setUser] = useState<User | null | undefined>(undefined);
   const [error, setError] = useState<string | null>(null);
@@ -59,19 +80,16 @@ export const useAuth = () => {
     }
   };
 
-  const getUserData = async (userId: string) => {
+  const getUserData = async (userId: string): Promise<UserData | null> => {
     try {
-      const userDocRef = doc(firestore, 'users', userId);
-      const userDocSnap = await getDoc(userDocRef);
-      if (userDocSnap.exists()) {
-        return userDocSnap.data();
-      } else {
-        console.log("No such document!");
-        return null;
+      const userDoc = await getDoc(doc(firestore, 'users', userId));
+      if (userDoc.exists()) {
+        return { id: userDoc.id, ...userDoc.data() } as UserData;
       }
-    } catch (error) {
-      console.error("Error fetching user data:", error);
       return null;
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+      throw error;
     }
   };
 

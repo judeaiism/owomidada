@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import { useAuth } from "@/hooks/useAuth"
+import { useAuth, UserData } from "@/hooks/useAuth"
 import ProtectedRoute from '@/components/ProtectedRoute'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
@@ -27,18 +27,6 @@ const mockApiCall = (data: any, delay = 1000) => new Promise((resolve) => setTim
 // Verification URL - replace with your actual URL
 const VERIFICATION_URL = "https://your-verification-url.com";
 
-interface UserData {
-  firstName: string;
-  lastName: string;
-  displayName: string;
-  email: string;
-  phone: string;
-  dob: string;
-  gender: string;
-  bio: string;
-  // Add any other fields that might be in your user data
-}
-
 export default function ProfilePage() {
   const [activeTab, setActiveTab] = useState("personal-info")
   const [profileVerified, setProfileVerified] = useState(false)
@@ -54,7 +42,7 @@ export default function ProfilePage() {
       if (user) {
         const data = await getUserData(user.uid);
         if (data) {
-          setUserData(data as UserData);  // Type assertion here
+          setUserData(data);
           if (data.profilePicture) {
             setProfilePicture(data.profilePicture);
           }
@@ -286,8 +274,10 @@ function PersonalInfoTab({
         await updateUserData(user.uid, personalInfo);
         setUserData(prevData => {
           if (prevData === null) {
-            return personalInfo;
+            // Include the id when creating a new UserData object
+            return { id: user.uid, ...personalInfo };
           }
+          // Include the existing id when updating
           return { ...prevData, ...personalInfo };
         });
         toast({
