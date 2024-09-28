@@ -10,16 +10,29 @@ import { useState, ChangeEvent, useEffect } from 'react';
 import useProductStore from '@/stores/productStore';
 import PulsatingButton from '../components/magicui/pulsating-button';
 import Image from 'next/image';
+import { useAuth } from '@/hooks/useAuth';
 
 export default function Home() {
+  const { user, getUserData } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isCategoryListOpen, setIsCategoryListOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const { items: products, fetchProducts } = useProductStore();
+  const [userData, setUserData] = useState<any>(null);
 
   useEffect(() => {
     fetchProducts();
   }, [fetchProducts]);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (user) {
+        const data = await getUserData(user.uid);
+        setUserData(data);
+      }
+    };
+    fetchUserData();
+  }, [user, getUserData]);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -54,7 +67,7 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-gray-100">
-      <Header toggleMenu={toggleMenu} />
+      <Header toggleMenu={toggleMenu} userData={userData} />
       <HamburgerMenu isOpen={isMenuOpen} onClose={toggleMenu} />
       <div className="container mx-auto px-4">
         <div className="flex flex-col items-center my-4">
@@ -90,7 +103,7 @@ export default function Home() {
             </button>
           </div>
         </div>
-        <ProductList products={products} />
+        <ProductList products={products} userData={userData} />
       </div>
       <CategoryList isOpen={isCategoryListOpen} onClose={toggleCategoryList} />
       <Footer />

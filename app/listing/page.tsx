@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -35,9 +35,10 @@ import { useAuth } from '@/hooks/useAuth';
 export default function CreateListing() {
   const [images, setImages] = useState<string[]>([])
   const [isPublishing, setIsPublishing] = useState(false)
-  const { user } = useAuth();
+  const { user, getUserData } = useAuth();
   const addProduct = useProductStore((state) => state.addProduct);
   const router = useRouter();
+  const [userData, setUserData] = useState<any>(null);
 
   const [formData, setFormData] = useState({
     title: '',
@@ -56,6 +57,16 @@ export default function CreateListing() {
     doorPickup: false,
     doorDropoff: false,
   });
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (user) {
+        const data = await getUserData(user.uid);
+        setUserData(data);
+      }
+    };
+    fetchUserData();
+  }, [user, getUserData]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -354,6 +365,14 @@ export default function CreateListing() {
           'Publish Listing'
         )}
       </Button>
+
+      {userData && userData.sellerSettings && (
+        <div>
+          <h2>Seller Information</h2>
+          <p>Store Name: {userData.sellerSettings.storeName}</p>
+          {/* Add more seller information as needed */}
+        </div>
+      )}
     </div>
   )
 }

@@ -3,9 +3,10 @@ import Link from 'next/link'
 
 interface HeaderProps {
   toggleMenu: () => void
+  userData: any; // Add this line
 }
 
-const Header: React.FC<HeaderProps> = ({ toggleMenu }) => {
+const Header: React.FC<HeaderProps> = ({ toggleMenu, userData }) => {
   return (
     <header className="bg-white shadow-md">
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
@@ -21,6 +22,12 @@ const Header: React.FC<HeaderProps> = ({ toggleMenu }) => {
           </svg>
         </button>
       </div>
+      {userData && (
+        <div>
+          <span>Welcome, {userData.firstName}</span>
+          {/* Add more personalized content based on userData */}
+        </div>
+      )}
     </header>
   )
 }

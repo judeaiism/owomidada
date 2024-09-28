@@ -3,9 +3,10 @@
 import { useRouter } from 'next/navigation';
 import useProductStore from '@/stores/productStore';
 import ProductList from '@/components/ProductList';
-import { useState, ChangeEvent } from 'react';
+import { useState, ChangeEvent, useEffect } from 'react';
 import SearchBar from '@/components/SearchBar';
 import CategoryList from '@/components/CategoryList';
+import { useAuth } from '@/hooks/useAuth';
 
 interface CategoryPageProps {
   params: {
@@ -18,6 +19,18 @@ export default function CategoryPage({ params }: CategoryPageProps) {
   const products = useProductStore((state) => state.items);
   const [searchQuery, setSearchQuery] = useState('');
   const [isCategoryListOpen, setIsCategoryListOpen] = useState(false);
+  const { user, getUserData } = useAuth();
+  const [userData, setUserData] = useState<any>(null);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (user) {
+        const data = await getUserData(user.uid);
+        setUserData(data);
+      }
+    };
+    fetchUserData();
+  }, [user, getUserData]);
 
   const filteredProducts = products
     .filter((product) => product.category.toLowerCase() === category.toLowerCase())
@@ -52,7 +65,14 @@ export default function CategoryPage({ params }: CategoryPageProps) {
 
       <CategoryList isOpen={isCategoryListOpen} onClose={toggleCategoryList} />
 
-      <ProductList products={filteredProducts} />
+      <ProductList products={filteredProducts} userData={userData} />
+
+      {userData && (
+        <div>
+          <h2>Welcome, {userData.firstName}</h2>
+          {/* Add more personalized content based on user data */}
+        </div>
+      )}
     </div>
   );
 }

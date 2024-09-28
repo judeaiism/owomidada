@@ -110,14 +110,20 @@ function ProductCard({ product }: ProductCardProps) {
 }
 
 interface ProductListProps {
-  products: Product[]
+  products: Product[];
+  userData?: any;  // Add this line
 }
 
-const ProductList: React.FC<ProductListProps> = ({ products }) => {
+const ProductList: React.FC<ProductListProps> = ({ products, userData }) => {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
   return (
     <div>
+      {userData && userData.sellerSettings && (
+        <div>
+          <h3>Listings from {userData.sellerSettings.storeName}</h3>
+        </div>
+      )}
       <h2 className="text-3xl font-bold mb-6">Product List</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {products.map((product) => (
