@@ -2,7 +2,7 @@ import React from 'react'
 import { useState } from 'react'
 import { Card, CardContent, CardFooter } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { ShoppingCart, Eye, MessageCircle, Bell, DollarSign, Heart, UserPlus, User, Facebook } from 'lucide-react'
 import Image from 'next/image'
 
@@ -36,6 +36,9 @@ function ViewDetailsModal({ product }: ProductCardProps) {
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>{product.name}</DialogTitle>
+          <DialogDescription>
+            {product.description}
+          </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
           <p>{product.description}</p>
@@ -99,14 +102,7 @@ function ProductCard({ product }: ProductCardProps) {
         <p className="text-sm text-gray-600 mb-2">{product.category}</p>
         <p className="text-xl font-bold">${product.price.toFixed(2)}</p>
       </CardContent>
-      <CardFooter className="p-4 pt-0 flex flex-col gap-2">
-        <Button 
-          variant="default" 
-          className="w-full bg-green-500 hover:bg-green-600 text-white"
-        >
-          <ShoppingCart className="mr-2 h-4 w-4" />
-          Add to Cart
-        </Button>
+      <CardFooter className="p-4 pt-0">
         <ViewDetailsModal product={product} />
       </CardFooter>
     </Card>
@@ -118,15 +114,27 @@ interface ProductListProps {
 }
 
 const ProductList: React.FC<ProductListProps> = ({ products }) => {
-  console.log('Rendering ProductList with products:', products);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div>
       <h2 className="text-3xl font-bold mb-6">Product List</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {products.map((product) => (
           <ProductCard key={product.id} product={product} />
         ))}
       </div>
+      <Dialog open={!!selectedProduct} onOpenChange={() => setSelectedProduct(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{selectedProduct?.name}</DialogTitle>
+            <DialogDescription>
+              {selectedProduct?.description}
+            </DialogDescription>
+          </DialogHeader>
+          {/* Rest of the product details */}
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
