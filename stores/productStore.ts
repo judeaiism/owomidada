@@ -25,7 +25,7 @@ export interface Product {
 
 interface ProductsState {
   items: Product[];
-  addProduct: (product: Omit<Product, 'id' | 'userId' | 'createdAt'>) => Promise<void>;
+  addProduct: (product: Omit<Product, "id" | "createdAt">) => Promise<void>;
   fetchProducts: () => Promise<void>;
   fetchUserProducts: (userId: string) => Promise<void>;
   hideProduct: (productId: string) => Promise<void>;

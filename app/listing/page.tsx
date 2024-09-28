@@ -118,7 +118,8 @@ export default function CreateListing() {
         location: formData.location,
         listingType: formData.listingType,
         shippingOptions: shippingOptions,
-        userId: user.uid,  // Ensure this line is included
+        hidden: false,
+        userId: user.uid, // Add this line to include the userId
       };
 
       await addProduct(newProduct);
