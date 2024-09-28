@@ -36,7 +36,7 @@ export default function ProfilePage() {
   const { user, getUserData, logOut, updateProfilePicture } = useAuth();
   const [userData, setUserData] = useState<UserData | null>(null);
   const router = useRouter();
-  const { items: userProducts, fetchUserProducts } = useProductStore();
+  const { items: userProducts, fetchUserProducts, hideProduct, unhideProduct, deleteProduct } = useProductStore();
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -131,6 +131,57 @@ export default function ProfilePage() {
     router.push('/');
   };
 
+  const handleHideProduct = async (productId: string) => {
+    try {
+      await hideProduct(productId);
+      toast({
+        title: "Listing hidden",
+        description: "The listing has been hidden from the homepage.",
+      });
+    } catch (error) {
+      console.error('Error hiding product:', error);
+      toast({
+        title: "Error",
+        description: "Failed to hide the listing. Please try again.",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const handleUnhideProduct = async (productId: string) => {
+    try {
+      await unhideProduct(productId);
+      toast({
+        title: "Listing unhidden",
+        description: "The listing is now visible on the homepage.",
+      });
+    } catch (error) {
+      console.error('Error unhiding product:', error);
+      toast({
+        title: "Error",
+        description: "Failed to unhide the listing. Please try again.",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const handleDeleteProduct = async (productId: string) => {
+    try {
+      await deleteProduct(productId);
+      toast({
+        title: "Listing deleted",
+        description: "The listing has been permanently deleted.",
+      });
+    } catch (error) {
+      console.error('Error deleting product:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete the listing. Please try again.",
+        variant: "destructive"
+      });
+    }
+  };
+
   return (
     <ProtectedRoute>
       <div className="container mx-auto p-6">
@@ -213,7 +264,12 @@ export default function ProfilePage() {
                     <CardDescription>View and manage your product listings</CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <UserListingsTable listings={userProducts} />
+                    <UserListingsTable 
+                      listings={userProducts} 
+                      onHide={handleHideProduct}
+                      onUnhide={handleUnhideProduct}
+                      onDelete={handleDeleteProduct}
+                    />
                   </CardContent>
                 </Card>
               </TabsContent>

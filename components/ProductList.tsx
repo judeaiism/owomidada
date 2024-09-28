@@ -1,10 +1,11 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Card, CardContent, CardFooter } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { ShoppingCart, Eye, MessageCircle, Bell, DollarSign, Heart, UserPlus, User, Facebook } from 'lucide-react'
 import Image from 'next/image'
+import useProductStore from '@/stores/productStore'
 
 interface Product {
   id: string
@@ -121,8 +122,13 @@ interface ProductListProps {
   userData?: any;  // Add this line
 }
 
-const ProductList: React.FC<ProductListProps> = ({ products, userData }) => {
+const ProductList: React.FC<ProductListProps> = ({ userData }) => {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const { items: products, fetchProducts } = useProductStore();
+
+  useEffect(() => {
+    fetchProducts();
+  }, [fetchProducts]);
 
   return (
     <div>
