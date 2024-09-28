@@ -3,60 +3,118 @@
 import * as React from "react"
 import Link from "next/link"
 import { Menu, MessageSquare, Home, List, User, Search, X } from "lucide-react"
+import { useRouter } from 'next/navigation'
+import { auth, database, firestore } from "@/lib/firebase"
+import { onValue, ref, push, set } from 'firebase/database'
+import { collection, query as firebaseQuery, where, getDocs } from 'firebase/firestore'
 
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@/components/ui/command"
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover"
 import { Input } from "@/components/ui/input"
-
-const users = [
-  {
-    name: "Olivia Martin",
-    email: "m@example.com",
-    avatar: "https://ui.shadcn.com/avatars/01.png",
-  },
-  {
-    name: "Isabella Nguyen",
-    email: "isabella.nguyen@example.com",
-    avatar: "https://ui.shadcn.com/avatars/02.png",
-  },
-  {
-    name: "Emma Wilson",
-    email: "emma@example.com",
-    avatar: "https://ui.shadcn.com/avatars/03.png",
-  },
-  {
-    name: "Jack Williams",
-    email: "jack.williams@example.com",
-    avatar: "https://ui.shadcn.com/avatars/04.png",
-  },
-  {
-    name: "Sophia Davis",
-    email: "sophia.davis@example.com",
-    avatar: "https://ui.shadcn.com/avatars/05.png",
-  },
-]
+import { useUserData, UserData } from "@/hooks/useUserData"
+import SearchBar from "@/components/SearchBar"
 
 export default function ChatPage() {
   const [open, setOpen] = React.useState(false)
-  const [selectedUser, setSelectedUser] = React.useState<typeof users[0] | null>(null)
+  const [selectedUser, setSelectedUser] = React.useState<UserData | null>(null)
   const [isChatOpen, setIsChatOpen] = React.useState(false)
+  const [chats, setChats] = React.useState<any[]>([])
+  const [searchQuery, setSearchQuery] = React.useState("")
+  const [searchResults, setSearchResults] = React.useState<UserData[]>([])
+  const [message, setMessage] = React.useState("")
+  const [messages, setMessages] = React.useState<any[]>([])
 
-  const handleUserSelect = (user: typeof users[0]) => {
+  const router = useRouter()
+  const currentUser = auth.currentUser
+  const { userData: currentUserData } = useUserData(currentUser?.uid || null)
+
+  React.useEffect(() => {
+    if (!currentUser) {
+      router.push('/login')
+      return
+    }
+
+    const chatsRef = ref(database, `chats/${currentUser.uid}`)
+    const unsubscribe = onValue(chatsRef, (snapshot) => {
+      const data = snapshot.val()
+      if (data) {
+        const chatsArray = Object.entries(data).map(([id, chat]: [string, any]) => ({
+          id,
+          ...chat,
+        }))
+        setChats(chatsArray)
+      }
+    })
+
+    return () => unsubscribe()
+  }, [currentUser, router])
+
+  const handleUserSelect = (user: UserData) => {
     setSelectedUser(user)
     setIsChatOpen(true)
+    loadMessages(user.id)
+  }
+
+  const loadMessages = (userId: string) => {
+    const messagesRef = ref(database, `messages/${currentUser!.uid}/${userId}`)
+    onValue(messagesRef, (snapshot) => {
+      const data = snapshot.val()
+      if (data) {
+        const messagesArray = Object.values(data)
+        setMessages(messagesArray)
+      } else {
+        setMessages([])
+      }
+    })
+  }
+
+  const handleSearch = async (query: string) => {
+    setSearchQuery(query)
+    if (query.length > 2) {
+      const usersRef = collection(firestore, 'users')
+      const q = firebaseQuery(usersRef, where('firstName', '>=', query), where('firstName', '<=', query + '\uf8ff'))
+      const querySnapshot = await getDocs(q)
+      const results: UserData[] = []
+      querySnapshot.forEach((doc) => {
+        const userData = doc.data() as Omit<UserData, 'id'>;
+        results.push({ 
+          id: doc.id, 
+          ...userData,
+          name: `${userData.firstName} ${userData.lastName}`,
+          avatar: userData.profilePicture || "/images/placeholder-avatar.jpg"
+        })
+      })
+      setSearchResults(results)
+    } else {
+      setSearchResults([])
+    }
+  }
+
+  const startNewChat = (user: UserData) => {
+    const chatRef = ref(database, `chats/${currentUser!.uid}/${user.id}`)
+    set(chatRef, {
+      userId: user.id,
+      name: user.name ?? `${user.firstName} ${user.lastName}`,
+      avatar: user.avatar ?? user.profilePicture ?? "/images/placeholder-avatar.jpg",
+      lastMessage: '',
+      timestamp: Date.now(),
+    })
+    handleUserSelect(user)
+  }
+
+  const sendMessage = () => {
+    if (message.trim() && selectedUser) {
+      const messageData = {
+        senderId: currentUser!.uid,
+        text: message,
+        timestamp: Date.now(),
+      }
+      const chatRef = ref(database, `messages/${currentUser!.uid}/${selectedUser.id}`)
+      push(chatRef, messageData)
+      const recipientChatRef = ref(database, `messages/${selectedUser.id}/${currentUser!.uid}`)
+      push(recipientChatRef, messageData)
+      setMessage('')
+    }
   }
 
   return (
@@ -86,99 +144,83 @@ export default function ChatPage() {
             </Link>
           </Button>
         </nav>
-        <div className="ml-auto flex items-center space-x-4">
-          <Popover open={open} onOpenChange={setOpen}>
-            <PopoverTrigger asChild>
-              <Button
-                variant="outline"
-                role="combobox"
-                aria-expanded={open}
-                aria-label="Select a user"
-                className="w-[200px] justify-between"
-                size="lg"
-              >
-                {selectedUser ? selectedUser.name : "Select user..."}
-                <Menu className="ml-2 h-5 w-5 shrink-0 opacity-50" />
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-[200px] p-0">
-              <Command>
-                <CommandInput placeholder="Search users..." />
-                <CommandList>
-                  <CommandEmpty>No users found.</CommandEmpty>
-                  <CommandGroup heading="Users">
-                    {users.map((user) => (
-                      <CommandItem
-                        key={user.email}
-                        onSelect={() => {
-                          handleUserSelect(user)
-                          setOpen(false)
-                        }}
-                      >
-                        {user.name}
-                      </CommandItem>
-                    ))}
-                  </CommandGroup>
-                </CommandList>
-              </Command>
-            </PopoverContent>
-          </Popover>
-        </div>
       </header>
       <div className="flex-1 flex overflow-hidden">
         <div className={cn("w-full flex flex-col", isChatOpen ? "hidden md:flex md:w-1/3" : "")}>
           <div className="p-4 border-b">
-            <div className="relative">
-              <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input placeholder="Search chats" className="pl-8" />
-            </div>
+            <SearchBar 
+              value={searchQuery}
+              onChange={(e) => handleSearch(e.target.value)}
+            />
           </div>
           <nav className="flex-1 overflow-auto py-2">
-            {users.map((user) => (
-              <button
-                key={user.email}
-                className={cn(
-                  "flex items-center w-full p-4 hover:bg-muted transition-colors",
-                  selectedUser?.email === user.email && "bg-muted"
-                )}
-                onClick={() => handleUserSelect(user)}
-              >
-                <img
-                  src={user.avatar}
-                  alt={user.name}
-                  className="w-10 h-10 rounded-full mr-3"
-                />
-                <div className="flex-1 text-left">
-                  <div className="font-medium">{user.name}</div>
-                  <div className="text-sm text-muted-foreground truncate">
-                    {"Hey, how's it going?"}
+            {searchQuery.length > 2 ? (
+              searchResults.map((user) => (
+                <button
+                  key={user.id}
+                  className="flex items-center w-full p-4 hover:bg-muted transition-colors"
+                  onClick={() => startNewChat(user)}
+                >
+                  <img
+                    src={user.avatar ?? user.profilePicture ?? "/images/placeholder-avatar.jpg"}
+                    alt={user.name ?? `${user.firstName} ${user.lastName}`}
+                    className="w-10 h-10 rounded-full mr-3"
+                  />
+                  <div className="flex-1 text-left">
+                    <div className="font-medium">{user.name ?? `${user.firstName} ${user.lastName}`}</div>
+                    <div className="text-sm text-muted-foreground truncate">
+                      {user.email}
+                    </div>
                   </div>
-                </div>
-                <div className="text-xs text-muted-foreground">2m ago</div>
-              </button>
-            ))}
+                </button>
+              ))
+            ) : (
+              chats.map((chat) => (
+                <button
+                  key={chat.id}
+                  className={cn(
+                    "flex items-center w-full p-4 hover:bg-muted transition-colors",
+                    selectedUser?.id === chat.userId && "bg-muted"
+                  )}
+                  onClick={() => handleUserSelect(chat)}
+                >
+                  <img
+                    src={chat.avatar}
+                    alt={chat.name}
+                    className="w-10 h-10 rounded-full mr-3"
+                  />
+                  <div className="flex-1 text-left">
+                    <div className="font-medium">{chat.name}</div>
+                    <div className="text-sm text-muted-foreground truncate">
+                      {chat.lastMessage}
+                    </div>
+                  </div>
+                  <div className="text-xs text-muted-foreground">
+                    {new Date(chat.timestamp).toLocaleTimeString()}
+                  </div>
+                </button>
+              ))
+            )}
           </nav>
         </div>
-        {isChatOpen && (
+        {isChatOpen && selectedUser && (
           <main className="flex-1 flex flex-col md:w-2/3">
             <div className="flex items-center justify-between p-4 border-b">
-              {selectedUser && (
-                <div className="flex items-center space-x-2">
-                  <img
-                    src={selectedUser.avatar}
-                    alt={selectedUser.name}
-                    className="w-10 h-10 rounded-full"
-                  />
-                  <div>
-                    <p className="text-lg font-medium leading-none">
-                      {selectedUser.name}
-                    </p>
-                    <p className="text-sm text-muted-foreground">
-                      {selectedUser.email}
-                    </p>
-                  </div>
+              <div className="flex items-center space-x-2">
+                <img
+                  src={selectedUser.avatar}
+                  alt={selectedUser.name}
+                  className="w-10 h-10 rounded-full"
+                />
+                <div>
+                  <p className="text-lg font-medium leading-none">
+                    {selectedUser.name}
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    {selectedUser.email}
+                  </p>
                 </div>
-              )}
+              </div>
               <Button
                 variant="ghost"
                 size="icon"
@@ -189,13 +231,22 @@ export default function ChatPage() {
             </div>
             <div className="flex-1 overflow-y-auto p-4">
               <div className="space-y-4">
-                <div className="rounded-lg border p-4">
-                  <p className="text-sm">
-                    This is where the chat messages would appear. You can implement
-                    a real-time chat functionality using technologies like WebSockets
-                    or Server-Sent Events.
-                  </p>
-                </div>
+                {messages.map((msg, index) => (
+                  <div
+                    key={index}
+                    className={cn(
+                      "max-w-[70%] rounded-lg p-4",
+                      msg.senderId === currentUser!.uid
+                        ? "bg-primary text-primary-foreground ml-auto"
+                        : "bg-muted"
+                    )}
+                  >
+                    <p className="text-sm">{msg.text}</p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {new Date(msg.timestamp).toLocaleTimeString()}
+                    </p>
+                  </div>
+                ))}
               </div>
             </div>
             <footer className="border-t p-4">
@@ -204,8 +255,11 @@ export default function ChatPage() {
                   type="text"
                   placeholder="Type a message..."
                   className="flex-1"
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
                 />
-                <Button size="lg">Send</Button>
+                <Button size="lg" onClick={sendMessage}>Send</Button>
               </div>
             </footer>
           </main>
