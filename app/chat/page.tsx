@@ -151,9 +151,9 @@ export default function ChatPage() {
   return (
     <div className="h-screen flex flex-col">
       <header className="flex items-center px-4 py-4 border-b">
-        <Link href="/" className="mr-6">
+        <Link href="/chat" className="mr-6">
           <MessageSquare className="h-8 w-8" />
-          <span className="sr-only">Home</span>
+          <span className="sr-only">Chat</span>
         </Link>
         <nav className="flex items-center space-x-4 lg:space-x-6 mx-6">
           <Button asChild variant="ghost" size="lg" className="p-2">

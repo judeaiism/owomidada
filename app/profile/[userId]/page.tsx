@@ -9,6 +9,8 @@ import { Button } from "@/components/ui/button"
 import { MessageSquare, Star, Package, TruckIcon, RefreshCcw, Pencil } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useToast } from "@/hooks/use-toast"
+import { database } from "@/lib/firebase"
+import { ref, set } from 'firebase/database'
 
 interface UserProfileData {
   id: string;
@@ -74,6 +76,7 @@ export default function Component() {
   ])
   const { toast } = useToast()
   const router = useRouter()
+  const { user } = useAuth() // Add this line to get the current user
 
   useEffect(() => {
     const fetchProfileData = async () => {
@@ -113,7 +116,55 @@ export default function Component() {
   }, [userId, getUserData, toast])
 
   const handleMessageUser = () => {
-    console.log('Message user clicked')
+    if (!user) {
+      toast({
+        title: "Error",
+        description: "You must be logged in to message a seller.",
+        variant: "destructive"
+      })
+      return
+    }
+
+    if (user.uid === userId) {
+      toast({
+        title: "Error",
+        description: "You cannot message yourself.",
+        variant: "destructive"
+      })
+      return
+    }
+
+    if (!profileData) {
+      toast({
+        title: "Error",
+        description: "Unable to load seller information. Please try again.",
+        variant: "destructive"
+      })
+      return
+    }
+
+    // Create or update the chat entry for the current user
+    const currentUserChatRef = ref(database, `chats/${user.uid}/${userId}`)
+    set(currentUserChatRef, {
+      userId: userId,
+      name: `${profileData.firstName} ${profileData.lastName}`,
+      avatar: profileData.profilePicture || '/placeholder.svg?height=96&width=96',
+      lastMessage: '',
+      timestamp: Date.now(),
+    })
+
+    // Create or update the chat entry for the seller
+    const sellerChatRef = ref(database, `chats/${userId}/${user.uid}`)
+    set(sellerChatRef, {
+      userId: user.uid,
+      name: user.displayName || 'User', // You might want to fetch the current user's name
+      avatar: user.photoURL || '/placeholder.svg?height=96&width=96',
+      lastMessage: '',
+      timestamp: Date.now(),
+    })
+
+    // Redirect to the chat page
+    router.push('/chat')
   }
 
   const handleLeaveReview = () => {
