@@ -19,6 +19,7 @@ import Link from 'next/link'
 import { storage } from '@/lib/firebase';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { useRouter } from 'next/navigation';
+import useProductStore from '@/stores/productStore';
 
 // Mock API calls
 const mockApiCall = (data: any, delay = 1000) => new Promise((resolve) => setTimeout(() => resolve(data), delay));
@@ -46,6 +47,7 @@ export default function ProfilePage() {
   const { user, getUserData, logOut, updateProfilePicture } = useAuth();
   const [userData, setUserData] = useState<UserData | null>(null);
   const router = useRouter();
+  const { items: userProducts, fetchUserProducts } = useProductStore();
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -61,6 +63,12 @@ export default function ProfilePage() {
     };
     fetchUserData();
   }, [user, getUserData]);
+
+  useEffect(() => {
+    if (user) {
+      fetchUserProducts(user.uid);
+    }
+  }, [user, fetchUserProducts]);
 
   const handleChangePhoto = useCallback(async () => {
     if (!user) {

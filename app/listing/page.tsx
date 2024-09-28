@@ -30,10 +30,12 @@ import useProductStore from '@/stores/productStore';
 import { useRouter } from 'next/navigation';
 import { RainbowButton } from "@/components/ui/rainbow-button";
 import Link from 'next/link';
+import { useAuth } from '@/hooks/useAuth';
 
 export default function CreateListing() {
   const [images, setImages] = useState<string[]>([])
   const [isPublishing, setIsPublishing] = useState(false)
+  const { user } = useAuth();
   const addProduct = useProductStore((state) => state.addProduct);
   const router = useRouter();
 
@@ -45,6 +47,14 @@ export default function CreateListing() {
     description: '',
     location: '',
     listingType: 'single'
+  });
+
+  // Add this near the top of your component, with other state declarations
+  const [shippingOptions, setShippingOptions] = useState({
+    offerShipping: false,
+    publicMeetup: false,
+    doorPickup: false,
+    doorDropoff: false,
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -79,37 +89,58 @@ export default function CreateListing() {
     setImages(images.filter((_, i) => i !== index))
   }
 
-  const handlePublish = () => {
-    setIsPublishing(true)
-    const newProduct = {
-      name: formData.title,
-      price: parseFloat(formData.price),
-      category: formData.category,
-      description: formData.description,
-      image: images[0] || '',
-      condition: formData.condition,
-      location: formData.location,
-      listingType: formData.listingType,
-    };
+  const handlePublish = async () => {
+    if (!user) {
+      alert("You must be logged in to create a listing");
+      return;
+    }
 
-    addProduct(newProduct);
+    setIsPublishing(true);
+    try {
+      const newProduct = {
+        name: formData.title,
+        price: parseFloat(formData.price),
+        category: formData.category,
+        description: formData.description,
+        image: images[0] || '',
+        condition: formData.condition,
+        location: formData.location,
+        listingType: formData.listingType,
+        shippingOptions: shippingOptions,  // Add this line
+      };
 
-    setIsPublishing(false);
-    alert("Listing published successfully!");
-    // Reset form
-    setFormData({
-      title: '',
-      price: '',
-      category: '',
-      condition: 'new',
-      description: '',
-      location: '',
-      listingType: 'single'
-    });
-    setImages([]);
-    // Navigate back to the home page
-    router.push('/');
+      await addProduct(newProduct);
+
+      alert("Listing published successfully!");
+      // Reset form and navigate
+      setFormData({
+        title: '',
+        price: '',
+        category: '',
+        condition: 'new',
+        description: '',
+        location: '',
+        listingType: 'single'
+      });
+      setImages([]);
+      setShippingOptions({
+        offerShipping: false,
+        publicMeetup: false,
+        doorPickup: false,
+        doorDropoff: false,
+      });
+      router.push('/');
+    } catch (error) {
+      console.error("Error publishing listing:", error);
+      alert("Failed to publish listing. Please try again.");
+    } finally {
+      setIsPublishing(false);
+    }
   }
+
+  const handleShippingOptionChange = (option: keyof typeof shippingOptions) => {
+    setShippingOptions(prev => ({ ...prev, [option]: !prev[option] }));
+  };
 
   return (
     <div className="container mx-auto p-4 max-w-2xl">
@@ -272,19 +303,35 @@ export default function CreateListing() {
             </DialogHeader>
             <div className="grid gap-4 py-4">
               <div className="flex items-center space-x-2">
-                <Checkbox id="offer-shipping" />
+                <Checkbox 
+                  id="offer-shipping" 
+                  checked={shippingOptions.offerShipping}
+                  onCheckedChange={() => handleShippingOptionChange('offerShipping')}
+                />
                 <Label htmlFor="offer-shipping">Offer Shipping</Label>
               </div>
               <div className="flex items-center space-x-2">
-                <Checkbox id="public-meetup" />
+                <Checkbox 
+                  id="public-meetup" 
+                  checked={shippingOptions.publicMeetup}
+                  onCheckedChange={() => handleShippingOptionChange('publicMeetup')}
+                />
                 <Label htmlFor="public-meetup">Public Meet-up</Label>
               </div>
               <div className="flex items-center space-x-2">
-                <Checkbox id="door-pickup" />
+                <Checkbox 
+                  id="door-pickup" 
+                  checked={shippingOptions.doorPickup}
+                  onCheckedChange={() => handleShippingOptionChange('doorPickup')}
+                />
                 <Label htmlFor="door-pickup">Door Pick-up</Label>
               </div>
               <div className="flex items-center space-x-2">
-                <Checkbox id="door-dropoff" />
+                <Checkbox 
+                  id="door-dropoff" 
+                  checked={shippingOptions.doorDropoff}
+                  onCheckedChange={() => handleShippingOptionChange('doorDropoff')}
+                />
                 <Label htmlFor="door-dropoff">Door Drop-off</Label>
               </div>
             </div>

@@ -15,11 +15,11 @@ export default function Home() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isCategoryListOpen, setIsCategoryListOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const products = useProductStore((state) => state.items);
+  const { items: products, fetchProducts } = useProductStore();
 
   useEffect(() => {
-    console.log('Products in Home component:', products);
-  }, [products]);
+    fetchProducts();
+  }, [fetchProducts]);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
