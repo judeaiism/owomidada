@@ -6,7 +6,7 @@ import { useAuth } from "@/hooks/useAuth"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
-import { MessageSquare } from 'lucide-react'
+import { MessageSquare, Star, Package, TruckIcon, RefreshCcw, Pencil } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useToast } from "@/hooks/use-toast"
 
@@ -29,124 +29,223 @@ interface UserProfileData {
   };
 }
 
-export default function UserProfilePage() {
+interface Review {
+  id: string;
+  reviewerName: string;
+  reviewerAvatar: string;
+  rating: number;
+  text: string;
+  images: string[];
+  date: string;
+}
+
+export default function Component() {
   const { userId } = useParams()
   const { getUserData } = useAuth()
   const [profileData, setProfileData] = useState<UserProfileData | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
-  const router = useRouter()
+  const [reviews, setReviews] = useState<Review[]>([
+    {
+      id: '1',
+      reviewerName: 'Alice Johnson',
+      reviewerAvatar: '/placeholder.svg?height=40&width=40',
+      rating: 5,
+      text: 'Absolutely love the handmade necklace I bought! The craftsmanship is exquisite and it arrived beautifully packaged.',
+      images: ['/placeholder.svg?height=100&width=100', '/placeholder.svg?height=100&width=100'],
+      date: '2023-09-15',
+    },
+    {
+      id: '2',
+      reviewerName: 'Bob Smith',
+      reviewerAvatar: '/placeholder.svg?height=40&width=40',
+      rating: 4,
+      text: 'Great quality products. The wooden coasters I ordered are both functional and stylish. Shipping was a bit slow, though.',
+      images: ['/placeholder.svg?height=100&width=100'],
+      date: '2023-09-10',
+    },
+    {
+      id: '3',
+      reviewerName: 'Carol White',
+      reviewerAvatar: '/placeholder.svg?height=40&width=40',
+      rating: 5,
+      text: 'John\'s customer service is top-notch! He went above and beyond to customize a piece for me. Highly recommended!',
+      images: [],
+      date: '2023-09-05',
+    },
+  ])
   const { toast } = useToast()
+  const router = useRouter()
 
   useEffect(() => {
-    const fetchUserProfile = async () => {
+    const fetchProfileData = async () => {
       if (userId) {
         try {
           const userData = await getUserData(userId as string)
           if (userData) {
-            setProfileData(userData as UserProfileData)
+            setProfileData({
+              id: userData.id,
+              firstName: userData.firstName,
+              lastName: userData.lastName,
+              email: userData.email,
+              profilePicture: userData.profilePicture || '/placeholder.svg?height=96&width=96',
+              bio: userData.bio,
+              sellerSettings: userData.sellerSettings || {
+                storeName: '',
+                storeDescription: '',
+                storeLogo: '/placeholder.svg?height=96&width=96',
+                storeBanner: '/placeholder.svg?height=192&width=768',
+                shippingPolicy: '',
+                returnPolicy: '',
+              },
+            })
           }
         } catch (error) {
-          console.error('Error fetching user profile:', error)
+          console.error('Error fetching user data:', error)
           toast({
             title: "Error",
             description: "Failed to load user profile. Please try again.",
             variant: "destructive"
           })
-        } finally {
-          setIsLoading(false)
         }
       }
     }
 
-    fetchUserProfile()
+    fetchProfileData()
   }, [userId, getUserData, toast])
 
   const handleMessageUser = () => {
-    // Implement logic to start a chat with this user
-    router.push(`/chat?userId=${userId}`)
+    console.log('Message user clicked')
   }
 
-  if (isLoading) {
-    return <div>Loading user profile...</div>
+  const handleLeaveReview = () => {
+    console.log('Leave a review clicked')
   }
 
   if (!profileData) {
-    return <div>User profile not found.</div>
+    return <div>Loading...</div>
   }
 
-  const birthYear = profileData.dob ? new Date(profileData.dob).getFullYear() : null
-
   return (
-    <div className="container mx-auto p-6">
-      <Card>
-        <CardHeader>
-          <CardTitle>User Profile</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex items-center space-x-4">
-            <Avatar className="w-20 h-20">
-              <AvatarImage src={profileData.profilePicture} alt={`${profileData.firstName} ${profileData.lastName}`} />
-              <AvatarFallback>{profileData.firstName[0]}{profileData.lastName[0]}</AvatarFallback>
-            </Avatar>
-            <div>
-              <h2 className="text-2xl font-bold">{profileData.firstName} {profileData.lastName}</h2>
-              <p className="text-gray-500">{profileData.email}</p>
+    <div className="container mx-auto p-6 bg-gray-50">
+      <Card className="overflow-hidden mb-6">
+        <div className="h-48 overflow-hidden">
+          <img src={profileData.sellerSettings?.storeBanner} alt="Store Banner" className="w-full object-cover" />
+        </div>
+        <CardHeader className="flex flex-row items-center space-x-4 pt-6">
+          <Avatar className="w-24 h-24 border-4 border-white shadow-lg">
+            <AvatarImage src={profileData.profilePicture} alt={`${profileData.firstName} ${profileData.lastName}`} />
+            <AvatarFallback>{profileData.firstName[0]}{profileData.lastName[0]}</AvatarFallback>
+          </Avatar>
+          <div className="flex-grow">
+            <CardTitle className="text-3xl font-bold">{profileData.firstName} {profileData.lastName}</CardTitle>
+            {profileData.sellerSettings?.storeName && (
+              <p className="text-xl text-primary">{profileData.sellerSettings.storeName}</p>
+            )}
+            <div className="flex items-center mt-2">
+              <Star className="w-5 h-5 text-yellow-400 mr-1" />
+              <span className="text-sm text-gray-600">4.8 (120 reviews)</span>
             </div>
           </div>
-          {profileData.bio && (
-            <div>
-              <h3 className="font-semibold">Bio</h3>
-              <p>{profileData.bio}</p>
-            </div>
-          )}
-          {birthYear && (
-            <div>
-              <h3 className="font-semibold">Birth Year</h3>
-              <p>{birthYear}</p>
-            </div>
-          )}
-          {profileData.gender && (
-            <div>
-              <h3 className="font-semibold">Gender</h3>
-              <p>{profileData.gender}</p>
-            </div>
-          )}
-          {profileData.sellerSettings && (
-            <>
+          <div className="flex flex-col space-y-2">
+            <Button onClick={handleMessageUser} className="w-full">
+              <MessageSquare className="mr-2 h-4 w-4" />
+              Message Seller
+            </Button>
+            <Button onClick={handleLeaveReview} variant="outline" className="w-full">
+              <Pencil className="mr-2 h-4 w-4" />
+              Leave a Review
+            </Button>
+          </div>
+        </CardHeader>
+        <CardContent className="grid md:grid-cols-2 gap-6 mt-6">
+          <div className="space-y-4">
+            {profileData.bio && (
               <div>
-                <h3 className="font-semibold">Store Name</h3>
-                <p>{profileData.sellerSettings.storeName}</p>
+                <h3 className="font-semibold text-lg">About the Seller</h3>
+                <p className="text-gray-600">{profileData.bio}</p>
               </div>
+            )}
+            {profileData.sellerSettings?.storeDescription && (
               <div>
-                <h3 className="font-semibold">Store Description</h3>
-                <p>{profileData.sellerSettings.storeDescription}</p>
+                <h3 className="font-semibold text-lg">Store Description</h3>
+                <p className="text-gray-600">{profileData.sellerSettings.storeDescription}</p>
               </div>
-              {profileData.sellerSettings.storeLogo && (
-                <div>
-                  <h3 className="font-semibold">Store Logo</h3>
-                  <img src={profileData.sellerSettings.storeLogo} alt="Store Logo" className="max-w-xs" />
+            )}
+          </div>
+          <div className="space-y-4">
+            {profileData.sellerSettings && (
+              <>
+                <div className="bg-white p-4 rounded-lg shadow">
+                  <h3 className="font-semibold text-lg flex items-center">
+                    <TruckIcon className="w-5 h-5 mr-2 text-primary" />
+                    Shipping Policy
+                  </h3>
+                  <p className="text-sm text-gray-600">{profileData.sellerSettings.shippingPolicy}</p>
                 </div>
-              )}
-              {profileData.sellerSettings.storeBanner && (
-                <div>
-                  <h3 className="font-semibold">Store Banner</h3>
-                  <img src={profileData.sellerSettings.storeBanner} alt="Store Banner" className="max-w-full" />
+                <div className="bg-white p-4 rounded-lg shadow">
+                  <h3 className="font-semibold text-lg flex items-center">
+                    <RefreshCcw className="w-5 h-5 mr-2 text-primary" />
+                    Return Policy
+                  </h3>
+                  <p className="text-sm text-gray-600">{profileData.sellerSettings.returnPolicy}</p>
                 </div>
-              )}
-              <div>
-                <h3 className="font-semibold">Shipping Policy</h3>
-                <p>{profileData.sellerSettings.shippingPolicy}</p>
+              </>
+            )}
+            <div className="bg-white p-4 rounded-lg shadow">
+              <h3 className="font-semibold text-lg flex items-center">
+                <Package className="w-5 h-5 mr-2 text-primary" />
+                Products
+              </h3>
+              <p className="text-sm text-gray-600">View all products by this seller</p>
+              <Button variant="outline" className="mt-2 w-full">Browse Products</Button>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Customer Reviews</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-6">
+            {reviews.map((review) => (
+              <div key={review.id} className="border-b pb-4 last:border-b-0">
+                <div className="flex items-center mb-2">
+                  <Avatar className="w-10 h-10 mr-3">
+                    <AvatarImage src={review.reviewerAvatar} alt={review.reviewerName} />
+                    <AvatarFallback>{review.reviewerName[0]}</AvatarFallback>
+                  </Avatar>
+                  <div>
+                    <h4 className="font-semibold">{review.reviewerName}</h4>
+                    <div className="flex items-center">
+                      {[...Array(5)].map((_, i) => (
+                        <Star
+                          key={i}
+                          className={`w-4 h-4 ${
+                            i < review.rating ? 'text-yellow-400 fill-current' : 'text-gray-300'
+                          }`}
+                        />
+                      ))}
+                      <span className="text-sm text-gray-500 ml-2">{review.date}</span>
+                    </div>
+                  </div>
+                </div>
+                <p className="text-gray-700 mb-2">{review.text}</p>
+                {review.images.length > 0 && (
+                  <div className="flex space-x-2 mb-2">
+                    {review.images.map((image, index) => (
+                      <img
+                        key={index}
+                        src={image}
+                        alt={`Review image ${index + 1}`}
+                        className="w-20 h-20 object-cover rounded"
+                      />
+                    ))}
+                  </div>
+                )}
               </div>
-              <div>
-                <h3 className="font-semibold">Return Policy</h3>
-                <p>{profileData.sellerSettings.returnPolicy}</p>
-              </div>
-            </>
-          )}
-          <Button onClick={handleMessageUser}>
-            <MessageSquare className="mr-2 h-4 w-4" />
-            Message User
-          </Button>
+            ))}
+          </div>
         </CardContent>
       </Card>
     </div>
