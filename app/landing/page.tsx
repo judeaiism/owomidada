@@ -1,13 +1,40 @@
 import Link from 'next/link';
+import Head from 'next/head';
+import Image from 'next/image';
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-r from-blue-500 to-purple-600 text-white">
-      <h1 className="text-5xl font-bold mb-8">Welcome to Our Marketplace</h1>
-      <p className="text-xl mb-12">Discover amazing products and connect with sellers</p>
-      <Link href="/home" className="bg-white text-blue-600 px-8 py-3 rounded-full text-lg font-semibold hover:bg-opacity-90 transition-colors">
-        Enter Site
-      </Link>
-    </div>
+    <>
+      <Head>
+        <link rel="preload" as="image" href="/1.webp" />
+        <link rel="preload" as="image" href="/2.webp" />
+      </Head>
+      <div className="min-h-screen relative overflow-hidden">
+        <Image
+          src="/1.webp"
+          alt="Background 1"
+          layout="fill"
+          objectFit="cover"
+          priority
+          className="bg-image bg-image-1"
+        />
+        <Image
+          src="/2.webp"
+          alt="Background 2"
+          layout="fill"
+          objectFit="cover"
+          priority
+          className="bg-image bg-image-2"
+        />
+        <div className="absolute top-32 right-4 flex space-x-4 z-10">
+          <Link href="/home" className="bg-black text-white px-6 py-2 rounded-full text-sm font-semibold hover:bg-opacity-80 transition-colors">
+            Gba Owo/Register
+          </Link>
+          <Link href="/login" className="bg-black text-white px-6 py-2 rounded-full text-sm font-semibold hover:bg-opacity-80 transition-colors">
+            Log in
+          </Link>
+        </div>
+      </div>
+    </>
   );
 }
