@@ -1,0 +1,208 @@
+
+kehers
+/
+paystack
+ 
+Type / to search
+Code
+Issues
+8
+Pull requests
+6
+Actions
+Projects
+Security
+Insights
+Owner avatar
+paystack
+Public
+kehers/paystack
+
+t
+Add file
+Folders and files
+Name		
+Latest commit
+subomi
+subomi
+fixed build failure 2
+e74305a
+ · 
+7 years ago
+History
+resources
+Merge branch 'testing'
+7 years ago
+test
+Merge branch 'testing'
+7 years ago
+.editorconfig
+first commit
+9 years ago
+.gitignore
+first commit
+9 years ago
+.travis.yml
+Update test
+8 years ago
+README.md
+Edited README
+7 years ago
+index.js
+fixed build failure 2
+7 years ago
+package.json
+Edited README
+7 years ago
+Repository files navigation
+README
+Paystack Build status
+
+Nodejs API wrapper for Paystack.
+
+Installation
+
+npm install paystack
+Usage
+
+// Require the library
+var paystack = require('paystack')('secret_key');
+Making calls to the resources
+
+The resource methods accepts are promisified, but can receive optional callback as the last argument.
+
+// First Option
+// paystack.{resource}.{method}
+paystack.customer.list(function(error, body) {
+  console.log(error);
+  console.log(body);
+});
+// Second Option
+// paystack.{resource}
+paystack.customer.list()
+	.then(function(body) {
+  		console.log(body);
+	})
+	.catch(function(error) {
+		console.log(error);
+	});
+For resource methods that use POST or PUT, the JSON body can be passed as the first argument.
+
+paystack.plan.create({
+  name: 'API demo',
+  amount: 10000,
+  interval: 'monthly'
+})
+  .then(function(error, body) {
+  	 console.log(error);
+    console.log(body);
+	});
+For GET, you can pass the required ID as string and optional parameters as an optional object argument.
+
+paystack.plan.get(90)
+	.then(function(error, body) {
+		console.log(error);
+		console.log(body);
+	});
+paystack.transactions.list({perPage: 20})
+	.then(function(error, body) {
+		console.log(error);
+		console.log(body);
+	});
+Resources
+
+customer
+create
+get
+list
+update
+transaction
+initialize
+charge
+get
+list
+totals
+verify
+plan
+create
+get
+list
+update
+page
+create
+get
+list
+update
+subscription
+create
+disable
+enable
+get
+list
+subaccount
+create
+get
+list
+listBanks
+update
+Miscellanous
+list_banks
+resolve_bin
+Contributing
+
+To ensure consistent code style, please follow the editorconfig rules in .editorconfig
+Tests
+
+To run tests, add your Paystack test secret key to package.json. (The test line should look something like this: env KEY=sk_test_1a68ac96a0171fb72111a24295d8d31d41c28eed ./node_modules/.bin/mocha...). Now run:
+
+npm test
+If you are contributing to the repo, kindly update the necessary test file in /test or add a new one and ensure all tests are passed before sending a PR.
+
+Todo
+
+Proper resource examples
+ES6 support
+About
+
+Nodejs API wrapper for Paystack
+
+Resources
+ Readme
+ Activity
+Stars
+ 147 stars
+Watchers
+ 12 watching
+Forks
+ 76 forks
+Report repository
+Releases
+
+ 3 tags
+Packages
+
+No packages published
+Contributors
+6
+
+ @subomi
+ @kehers
+ @theslyone
+ @sauban
+ @ibrahimlawal
+ @ewdave
+Languages
+
+JavaScript
+100.0%
+Footer
+© 2024 GitHub, Inc.
+Footer navigation
+Terms
+Privacy
+Security
+Status
+Docs
+Contact
+Manage cookies
+Do not share my personal information

@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
+import Link from 'next/link'
 
 // Add this interface for the merchandise item
 interface MerchItem {
@@ -108,7 +109,17 @@ export default function MerchPage() {
   return (
     <div className="min-h-screen bg-black text-white">
       <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold text-center mb-8">Our Exclusive Merchandise</h1>
+        <div className="flex justify-between items-center mb-8">
+          <h1 className="text-3xl font-bold">Our Exclusive Merchandise</h1>
+          <Link href="/" passHref>
+            <Button 
+              variant="outline" 
+              className="text-black bg-white border-white hover:bg-gray-200 hover:text-black transition-colors duration-300 text-lg px-6 py-3"
+            >
+              Home
+            </Button>
+          </Link>
+        </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
           {merchItems.map((item: MerchItem, index: number) => (
             <div key={index} className="space-y-4">
