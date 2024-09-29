@@ -21,6 +21,7 @@ import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { useRouter } from 'next/navigation';
 import useProductStore from '@/stores/productStore';
 import UserListingsTable from '@/components/UserListingsTable';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 // Mock API calls
 const mockApiCall = (data: any, delay = 1000) => new Promise((resolve) => setTimeout(() => resolve(data), delay));
@@ -233,8 +234,22 @@ export default function ProfilePage() {
             <CardTitle>Profile Management</CardTitle>
           </CardHeader>
           <CardContent>
-            <Tabs defaultValue="personal-info" className="w-full">
-              <TabsList className="grid grid-cols-2 sm:grid-cols-5 w-full">
+            <div className="mb-4 sm:hidden">
+              <Select onValueChange={setActiveTab} defaultValue={activeTab}>
+                <SelectTrigger className="w-full bg-primary text-primary-foreground hover:bg-primary/90 transition-colors">
+                  <SelectValue placeholder="Select tab" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="personal-info">Personal</SelectItem>
+                  <SelectItem value="seller-settings">Seller</SelectItem>
+                  <SelectItem value="security">Security</SelectItem>
+                  <SelectItem value="preferences">Preferences</SelectItem>
+                  <SelectItem value="listings">Listings</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+              <TabsList className="hidden sm:grid sm:grid-cols-5 w-full">
                 <TabsTrigger value="personal-info">Personal</TabsTrigger>
                 <TabsTrigger value="seller-settings">Seller</TabsTrigger>
                 <TabsTrigger value="security">Security</TabsTrigger>
