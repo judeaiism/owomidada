@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import Head from 'next/head';
 import Image from 'next/image';
+import { RainbowButton } from "@/components/ui/rainbow-button";
 
 export default function LandingPage() {
   return (
@@ -26,12 +27,16 @@ export default function LandingPage() {
           priority
           className="bg-image bg-image-2"
         />
-        <div className="absolute top-32 right-4 flex space-x-4 z-10">
-          <Link href="/home" className="bg-black text-white px-6 py-2 rounded-full text-sm font-semibold hover:bg-opacity-80 transition-colors">
-            Gba Owo/Register
+        <div className="absolute top-32 right-4 flex space-x-6 z-10">
+          <Link href="/home" passHref>
+            <RainbowButton>
+            ɡ͡ba Owọ / View Deals
+            </RainbowButton>
           </Link>
-          <Link href="/login" className="bg-black text-white px-6 py-2 rounded-full text-sm font-semibold hover:bg-opacity-80 transition-colors">
-            Log in
+          <Link href="/login" passHref>
+            <RainbowButton>
+              Log in
+            </RainbowButton>
           </Link>
         </div>
       </div>
