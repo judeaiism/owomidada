@@ -12,7 +12,7 @@ const avatars = Array.from({ length: 1000 }, (_, i) => {
       : `/placeholder.svg?height=50&width=50&text=${id}`,
     link: isFilled 
       ? 'https://severesaints.com'
-      : 'https://owomida.com/merch',
+      : 'https://paystack.com/buy/villagesquare-prjsch',
     title: isFilled ? 'Severe Saints' : `Title ${id}`,
     isFilled
   };
