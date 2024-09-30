@@ -157,7 +157,7 @@ export default function ChatPage() {
         </Link>
         <nav className="flex items-center space-x-4 lg:space-x-6 mx-6">
           <Button asChild variant="ghost" size="lg" className="p-2">
-            <Link href="/">
+            <Link href="/home">
               <Home className="h-6 w-6" />
               <span className="sr-only">Home</span>
             </Link>

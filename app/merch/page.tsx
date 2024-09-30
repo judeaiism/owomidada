@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import dynamic from 'next/dynamic'
 import { PaystackButton } from 'react-paystack'
+import { useRouter } from 'next/navigation';
 
 // Dynamically import PaystackButton with ssr option set to false
 const DynamicPaystackButton = dynamic(
@@ -151,6 +152,7 @@ export default function MerchPage() {
   const [name, setName] = useState("")
   const [error, setError] = useState('');
   const [isMounted, setIsMounted] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     setIsMounted(true);
@@ -230,14 +232,13 @@ export default function MerchPage() {
       <div className="container mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold">Our Exclusive Merchandise</h1>
-          <Link href="/" passHref>
-            <Button 
-              variant="outline" 
-              className="text-black bg-white border-white hover:bg-gray-200 hover:text-black transition-colors duration-300 text-lg px-6 py-3"
-            >
-              Home
-            </Button>
-          </Link>
+          <Button 
+            variant="outline" 
+            className="text-black bg-white border-white hover:bg-gray-200 hover:text-black transition-colors duration-300 text-lg px-6 py-3"
+            onClick={() => router.push('/home')}
+          >
+            Home
+          </Button>
         </div>
         
         {/* Add instructions for users */}

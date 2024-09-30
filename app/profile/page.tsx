@@ -129,7 +129,7 @@ export default function ProfilePage() {
   };
 
   const handleGoHome = () => {
-    router.push('/');
+    router.push('/home');
   };
 
   const handleGoToChat = () => {
