@@ -1,7 +1,7 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
-import { getFirestore } from 'firebase/firestore';
-import { getStorage } from 'firebase/storage';
+import { getFirestore, doc, setDoc } from 'firebase/firestore';
+import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { getDatabase } from 'firebase/database';
 
 const firebaseConfig = {
@@ -21,9 +21,26 @@ console.log('Firebase config:', {
 });
 
 const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
 
 export const auth = getAuth(app);
-export const firestore = db;
+export const firestore = getFirestore(app);
 export const storage = getStorage(app);
 export const database = getDatabase(app);
+
+export async function addSquareData(id: number, link: string, image: File) {
+  // Upload image to Firebase Storage
+  const storageRef = ref(storage, `squares/${id}`);
+  await uploadBytes(storageRef, image);
+  const imageUrl = await getDownloadURL(storageRef);
+
+  // Save data to Firestore
+  const squareRef = doc(firestore, 'squares', id.toString());
+  await setDoc(squareRef, {
+    id,
+    link,
+    imageUrl,
+    isFilled: true
+  });
+
+  return { id, link, imageUrl, isFilled: true };
+}
