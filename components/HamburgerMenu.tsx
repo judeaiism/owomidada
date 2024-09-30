@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
-import { FaUser, FaPlus, FaComments, FaBell, FaTshirt } from 'react-icons/fa';
+import { FaUser, FaPlus, FaComments, FaBell, FaTshirt, FaUsers } from 'react-icons/fa';
 import { useAuth } from '@/hooks/useAuth';
 
 interface HamburgerMenuProps {
@@ -61,6 +61,12 @@ const HamburgerMenu: React.FC<HamburgerMenuProps> = ({ isOpen, onClose }) => {
                     Log Out
                   </button>
                 </li>
+                <li>
+                  <Link href="/village-square" className="flex items-center text-blue-600 hover:text-blue-800">
+                    <FaUsers className="mr-2" />
+                    Village Square
+                  </Link>
+                </li>
               </>
             ) : (
               <>
@@ -83,6 +89,14 @@ const HamburgerMenu: React.FC<HamburgerMenuProps> = ({ isOpen, onClose }) => {
                     <button className="w-full bg-purple-600 text-white py-2 px-4 rounded hover:bg-purple-700 transition duration-300 flex items-center justify-center">
                       <FaTshirt className="mr-2" />
                       Merchandise
+                    </button>
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/village-square" className="block w-full">
+                    <button className="w-full bg-yellow-600 text-white py-2 px-4 rounded hover:bg-yellow-700 transition duration-300 flex items-center justify-center">
+                      <FaUsers className="mr-2" />
+                      Village Square
                     </button>
                   </Link>
                 </li>

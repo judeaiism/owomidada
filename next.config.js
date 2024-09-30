@@ -18,6 +18,20 @@ const nextConfig = {
       },
     ];
   },
+  webpack: (config, { dev, isServer }) => {
+    if (!dev && !isServer) {
+      config.optimization.minimizer.push(
+        new TerserPlugin({
+          terserOptions: {
+            compress: {
+              drop_console: true,
+            },
+          },
+        })
+      );
+    }
+    return config;
+  },
 };
 
 module.exports = nextConfig

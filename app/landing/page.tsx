@@ -1,7 +1,6 @@
 import Link from 'next/link';
 import Head from 'next/head';
 import Image from 'next/image';
-import { RainbowButton } from "@/components/ui/rainbow-button";
 
 export default function LandingPage() {
   return (
@@ -14,29 +13,20 @@ export default function LandingPage() {
         <Image
           src="/1.webp"
           alt="Background 1"
-          layout="fill"
-          objectFit="cover"
-          priority
-          className="bg-image bg-image-1"
+          fill
+          className="object-cover bg-image bg-image-1"
         />
         <Image
           src="/2.webp"
           alt="Background 2"
-          layout="fill"
-          objectFit="cover"
-          priority
-          className="bg-image bg-image-2"
+          fill
+          className="object-cover bg-image bg-image-2"
         />
-        <div className="absolute top-32 right-4 flex space-x-6 z-10">
+        <div className="absolute top-32 left-0 right-0 flex flex-col items-center z-10">
           <Link href="/home" passHref>
-            <RainbowButton>
-            ɡ͡ba Owọ / View Deals
-            </RainbowButton>
-          </Link>
-          <Link href="/login" passHref>
-            <RainbowButton>
-              Log in
-            </RainbowButton>
+            <button className="text-xl md:text-6xl px-6 py-3 md:px-24 md:py-12 bg-blue-500 hover:bg-blue-600 text-white font-bold rounded-xl transition-colors duration-200 ease-in-out">
+              Home
+            </button>
           </Link>
         </div>
       </div>
