@@ -54,7 +54,10 @@ export default function VillageSquareClient({ initialAvatars }: VillageSquareCli
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Owomida Village Square</h1>
+      <Button className="mb-4">
+        BUSINESS DIRECTORY - 1,000 TILES
+      </Button>
+      <h1 className="text-2xl font-bold mb-4">Owomida Village Square (Click, Discover, Connect) 🛖🛖🛖🛖🛖🛖</h1>
       <div 
         ref={parentRef} 
         className="h-[80vh] overflow-auto border border-gray-200 rounded-lg"
