@@ -50,26 +50,6 @@ function ViewDetailsModal({ product }: ProductCardProps) {
         </DialogHeader>
         <div className="grid gap-4 py-4">
           <p>{product.description}</p>
-          <Button variant="outline" className="justify-start">
-            <MessageCircle className="mr-2 h-4 w-4" />
-            Message seller
-          </Button>
-          <Button variant="outline" className="justify-start">
-            <Bell className="mr-2 h-4 w-4" />
-            Set alert for listing
-          </Button>
-          <Button variant="outline" className="justify-start">
-            <DollarSign className="mr-2 h-4 w-4" />
-            Send offer
-          </Button>
-          <Button variant="outline" className="justify-start">
-            <Heart className="mr-2 h-4 w-4" />
-            Save product
-          </Button>
-          <Button variant="outline" className="justify-start">
-            <UserPlus className="mr-2 h-4 w-4" />
-            Follow seller
-          </Button>
           <Button variant="outline" className="justify-start" onClick={handleSeeSellerDetails}>
             <User className="mr-2 h-4 w-4" />
             See seller details
