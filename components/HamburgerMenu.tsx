@@ -62,7 +62,7 @@ const HamburgerMenu: React.FC<HamburgerMenuProps> = ({ isOpen, onClose }) => {
                   </button>
                 </li>
                 <li>
-                  <Link href="/village-square" className="flex items-center text-blue-600 hover:text-blue-800">
+                  <Link href="/villagesquare" className="flex items-center text-blue-600 hover:text-blue-800">
                     <FaUsers className="mr-2" />
                     Village Square
                   </Link>
@@ -93,7 +93,7 @@ const HamburgerMenu: React.FC<HamburgerMenuProps> = ({ isOpen, onClose }) => {
                   </Link>
                 </li>
                 <li>
-                  <Link href="/village-square" className="block w-full">
+                  <Link href="/villagesquare" className="block w-full">
                     <button className="w-full bg-yellow-600 text-white py-2 px-4 rounded hover:bg-yellow-700 transition duration-300 flex items-center justify-center">
                       <FaUsers className="mr-2" />
                       Village Square
