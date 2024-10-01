@@ -14,7 +14,7 @@ export default function LandingPage() {
       const elapsedTime = Date.now() - startTime;
       console.log(`Redirecting to home page after ${elapsedTime}ms`);
       window.location.href = '/home';
-    }, 2000);
+    }, 1000);
 
     return () => {
       console.log('Cleaning up timer');
