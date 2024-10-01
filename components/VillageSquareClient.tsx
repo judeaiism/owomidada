@@ -9,6 +9,8 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { addSquareData } from '@/lib/firebase'
 import { useToast } from "@/components/ui/use-toast"
+import { useRouter } from 'next/navigation'
+import { cn } from "@/lib/utils"
 
 // Update the type for our avatar data
 type AvatarData = {
@@ -26,7 +28,9 @@ type VillageSquareClientProps = {
 export default function VillageSquareClient({ initialAvatars }: VillageSquareClientProps) {
   const [avatars, setAvatars] = useState(initialAvatars)
   const parentRef = useRef<HTMLDivElement>(null)
-  
+  const router = useRouter()
+  const [isLoading, setIsLoading] = useState(false)
+
   const rowVirtualizer = useVirtualizer({
     count: Math.ceil(initialAvatars.length / 20),
     getScrollElement: () => parentRef.current,
@@ -52,11 +56,29 @@ export default function VillageSquareClient({ initialAvatars }: VillageSquareCli
     }
   }
 
+  const handleOwomidaClick = () => {
+    setIsLoading(true)
+    router.push('/home')
+  }
+
   return (
     <div className="container mx-auto p-4">
-      <Button className="mb-4">
-        BUSINESS DIRECTORY - 1,000 TILES
-      </Button>
+      <div className="flex justify-between items-center mb-4">
+        <Button 
+          onClick={handleOwomidaClick}
+          className={cn(
+            "animate-flash-colors",
+            "text-white font-bold",
+            "transition-colors duration-500"
+          )}
+          disabled={isLoading}
+        >
+          {isLoading ? "You're not lost, you're here! (Loading), taking you home..." : "What is Owomida?"}
+        </Button>
+        <Button>
+          BUSINESS DIRECTORY - 1,000 TILES
+        </Button>
+      </div>
       <h1 className="text-2xl font-bold mb-4">Owomida Village Square (Click, Discover, Connect) 🛖🛖🛖🛖🛖🛖</h1>
       <div 
         ref={parentRef} 

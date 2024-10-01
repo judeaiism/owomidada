@@ -132,3 +132,16 @@ a {
     max-height: none !important;
   }
 }
+
+@keyframes flashColors {
+  0%, 100% {
+    background-color: black;
+  }
+  50% {
+    background-color: red;
+  }
+}
+
+.animate-flash-colors {
+  animation: flashColors 1s infinite;
+}
