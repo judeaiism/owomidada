@@ -14,7 +14,7 @@ export default function LandingPage() {
       const elapsedTime = Date.now() - startTime;
       console.log(`Redirecting to home page after ${elapsedTime}ms`);
       window.location.href = '/home';
-    }, 300);
+    }, 100);
 
     return () => {
       console.log('Cleaning up timer');
@@ -27,28 +27,30 @@ export default function LandingPage() {
   };
 
   return (
-    <div className="min-h-screen relative overflow-hidden">
-      <Image
-        src="/1.webp"
-        alt="Background 1"
-        fill
-        className={`object-cover object-center bg-image bg-image-1 transition-opacity duration-300 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
-        priority
-        onLoad={handleImageLoad}
-      />
-      <Image
-        src="/2.webp"
-        alt="Background 2"
-        fill
-        className={`object-cover object-center bg-image bg-image-2 transition-opacity duration-300 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
-        priority
-        onLoad={handleImageLoad}
-      />
-      {!isLoaded && (
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="text-2xl text-white">Loading...</div>
-        </div>
-      )}
+    <div className="min-h-screen flex items-center justify-center p-4">
+      <div className="relative w-full max-w-md aspect-[3/4]">
+        <Image
+          src="/1.webp"
+          alt="Background 1"
+          fill
+          className={`object-contain transition-opacity duration-300 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
+          priority
+          onLoad={handleImageLoad}
+        />
+        <Image
+          src="/2.webp"
+          alt="Background 2"
+          fill
+          className={`object-contain transition-opacity duration-300 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
+          priority
+          onLoad={handleImageLoad}
+        />
+        {!isLoaded && (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="text-2xl text-black">Loading...</div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
