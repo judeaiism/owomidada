@@ -66,7 +66,7 @@ export default function Footer() {
       </div>
       <div className="mt-12 pt-8 border-t border-gray-200">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-          <p className="text-sm">&copy; 2023 Your Marketplace. All rights reserved.</p>
+          <p className="text-sm">&copy; 2024 Owomida. All rights reserved.</p>
           <div className="flex space-x-6 text-sm">
             <a href="#" className="hover:text-gray-900 transition-colors">Privacy Policy</a>
             <a href="#" className="hover:text-gray-900 transition-colors">Terms of Service</a>

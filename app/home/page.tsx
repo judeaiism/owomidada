@@ -6,11 +6,23 @@ import ProductList from '../../components/ProductList';
 import HamburgerMenu from '../../components/HamburgerMenu';
 import CategoryList from '../../components/CategoryList';
 import Footer from '../../components/Footer';
-import { useState, ChangeEvent, useEffect } from 'react';
+import { useState, ChangeEvent, useEffect, FormEvent } from 'react';
 import useProductStore from '@/stores/productStore';
 import PulsatingButton from '../../components/magicui/pulsating-button';
 import Image from 'next/image';
 import { useAuth } from '@/hooks/useAuth';
+import { X } from 'lucide-react'
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
+import { db } from '@/lib/firebase';
+import { collection, addDoc } from 'firebase/firestore';
 
 export default function Home() {
   const { user, getUserData } = useAuth();
@@ -19,6 +31,8 @@ export default function Home() {
   const [searchQuery, setSearchQuery] = useState('');
   const { items: products, fetchProducts } = useProductStore();
   const [userData, setUserData] = useState<any>(null);
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [email, setEmail] = useState('');
 
   useEffect(() => {
     fetchProducts();
@@ -65,6 +79,31 @@ export default function Home() {
     setCurrentImageIndex((prevIndex) => (prevIndex - 1 + images.length) % images.length);
   };
 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsPopupOpen(true);
+    }, 5000); // Show popup after 5 seconds
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  const handlePopupSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    try {
+      // Add the email to Firestore
+      await addDoc(collection(db, 'subscribedEmails'), {
+        email: email,
+        timestamp: new Date()
+      });
+      console.log('Email successfully stored in Firebase');
+      setIsPopupOpen(false);
+      setEmail(''); // Clear the email input
+    } catch (error) {
+      console.error('Error storing email in Firebase:', error);
+      // You might want to show an error message to the user here
+    }
+  };
+
   return (
     <main className="min-h-screen bg-gray-100">
       <Header toggleMenu={toggleMenu} userData={userData} />
@@ -107,6 +146,38 @@ export default function Home() {
       </div>
       <CategoryList isOpen={isCategoryListOpen} onClose={toggleCategoryList} />
       <Footer />
+
+      {/* Updated Pop-up Dialog */}
+      <Dialog open={isPopupOpen} onOpenChange={setIsPopupOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold">OWOMIDA</DialogTitle>
+            <DialogDescription>
+              Get notified about latest drops.
+            </DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handlePopupSubmit} className="grid gap-4 py-4">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Input
+                id="email"
+                placeholder="Enter your email"
+                className="col-span-4"
+                type="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </div>
+            <Button type="submit" className="w-full">Submit</Button>
+          </form>
+          <p className="text-xs text-center text-gray-500">
+            Disclaimer: © 2024 Owomida. All rights reserved.
+          </p>
+          <p className="text-xs text-center text-gray-500">
+            Built with <a href="https://mvpin24.store" target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">mvpin24</a>
+          </p>
+        </DialogContent>
+      </Dialog>
     </main>
   );
 }

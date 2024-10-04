@@ -44,3 +44,6 @@ export async function addSquareData(id: number, link: string, image: File) {
 
   return { id, link, imageUrl, isFilled: true };
 }
+
+// Initialize Firestore
+export const db = getFirestore(app);
