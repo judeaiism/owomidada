@@ -32,7 +32,7 @@ export default function LandingPage() {
         src="/1.webp"
         alt="Background 1"
         fill
-        className={`object-cover bg-image bg-image-1 transition-opacity duration-300 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
+        className={`object-cover object-center bg-image bg-image-1 transition-opacity duration-300 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
         priority
         onLoad={handleImageLoad}
       />
@@ -40,7 +40,7 @@ export default function LandingPage() {
         src="/2.webp"
         alt="Background 2"
         fill
-        className={`object-cover bg-image bg-image-2 transition-opacity duration-300 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
+        className={`object-cover object-center bg-image bg-image-2 transition-opacity duration-300 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
         priority
         onLoad={handleImageLoad}
       />

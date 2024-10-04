@@ -104,6 +104,19 @@ export default function Home() {
     }
   };
 
+  useEffect(() => {
+    // Add meta tag to prevent zooming on mobile
+    const meta = document.createElement('meta');
+    meta.name = 'viewport';
+    meta.content = 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no';
+    document.getElementsByTagName('head')[0].appendChild(meta);
+
+    return () => {
+      // Remove the meta tag when component unmounts
+      document.getElementsByTagName('head')[0].removeChild(meta);
+    };
+  }, []);
+
   return (
     <main className="min-h-screen bg-gray-100">
       <Header toggleMenu={toggleMenu} userData={userData} />
@@ -149,26 +162,26 @@ export default function Home() {
 
       {/* Updated Pop-up Dialog */}
       <Dialog open={isPopupOpen} onOpenChange={setIsPopupOpen}>
-        <DialogContent className="sm:max-w-[425px]">
+        <DialogContent className="sm:max-w-[300px] w-[90vw] max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="text-2xl font-bold">OWOMIDA</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="text-xl font-bold">OWOMIDA</DialogTitle>
+            <DialogDescription className="text-sm">
               Get notified about latest drops.
             </DialogDescription>
           </DialogHeader>
-          <form onSubmit={handlePopupSubmit} className="grid gap-4 py-4">
-            <div className="grid grid-cols-4 items-center gap-4">
+          <form onSubmit={handlePopupSubmit} className="grid gap-3 py-3">
+            <div className="grid grid-cols-1 items-center gap-3">
               <Input
                 id="email"
                 placeholder="Enter your email"
-                className="col-span-4"
+                className="col-span-1 text-sm"
                 type="email"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
             </div>
-            <Button type="submit" className="w-full">Submit</Button>
+            <Button type="submit" className="w-full text-sm">Submit</Button>
           </form>
           <p className="text-xs text-center text-gray-500">
             Disclaimer: © 2024 Owomida. All rights reserved.
